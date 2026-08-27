@@ -1,0 +1,77 @@
+# -*- mode: python ; coding: utf-8 -*-
+import os
+
+ROOT = os.path.abspath(SPECPATH)
+
+a = Analysis(
+    [os.path.join(ROOT, "main.py")],
+    pathex=[ROOT],
+    binaries=[],
+    datas=[
+        (os.path.join(ROOT, "web"), "web"),
+        (os.path.join(ROOT, "content"), "content"),
+    ],
+    hiddenimports=[
+        "webview",
+        "webview.platforms",
+        "webview.platforms.winforms",
+        "flask",
+        "jinja2",
+        "werkzeug",
+        "pyperclip",
+        "tkinter",
+        "tkinter.filedialog",
+        "src",
+        "src.server",
+        "src.settings",
+        "src.storage",
+        "src.pycharm_launcher",
+        "src.deepseek",
+        "content",
+        "content.content_data",
+        "content.pdf_pages",
+        "content.chapters",
+        "content.chapters.ch00",
+        "content.chapters.ch01",
+        "content.chapters.ch02",
+        "content.chapters.ch03",
+        "content.chapters.ch04",
+        "content.chapters.ch05",
+        "content.chapters.ch06",
+        "content.chapters.ch07",
+        "content.chapters.ch08",
+        "content.chapters.ch09",
+        "content.chapters.ch10",
+        "content.projects",
+        "content.projects.alien_invasion",
+        "content.projects.data_viz",
+        "content.projects.web_app",
+    ],
+    hookspath=[],
+    runtime_hooks=[],
+    excludes=[],
+    noarchive=False,
+)
+
+pyz = PYZ(a.pure)
+
+exe = EXE(
+    pyz,
+    a.scripts,
+    a.binaries,
+    a.datas,
+    [],
+    name="Python学习助手",
+    debug=False,
+    bootloader_ignore_signals=False,
+    strip=False,
+    upx=False,
+    upx_exclude=[],
+    runtime_tmpdir=None,
+    console=False,
+    disable_windowed_traceback=False,
+    argv_emulation=False,
+    target_arch=None,
+    codesign_identity=None,
+    entitlements_file=None,
+)

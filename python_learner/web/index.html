@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Python 学习助手 · 派派</title>
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">🐍 Python 学习助手 · 派派</div>
+    <nav class="nav">
+      <button class="nav-btn active" data-view="home">📚 目录</button>
+      <button class="nav-btn" data-view="pdf">📄 PDF 阅读</button>
+      <button class="nav-btn" data-view="homework">📝 作业</button>
+      <button class="nav-btn" data-view="settings">⚙️ 设置</button>
+    </nav>
+  </header>
+
+  <main class="main">
+    <!-- 目录 -->
+    <section id="view-home" class="view">
+      <h1>欢迎使用 Python 学习助手</h1>
+      <p class="lead">参考书：《Python编程从入门到实践 第2版》。选一章开始学，写代码、本地运行、再交给 DeepSeek 批改。</p>
+      <h2 class="section-title">基础章节</h2>
+      <div id="chapter-list" class="card-grid"></div>
+      <h2 class="section-title">大型项目</h2>
+      <div id="project-list" class="card-grid"></div>
+    </section>
+
+    <!-- 章节 -->
+    <section id="view-chapter" class="view" hidden></section>
+
+    <!-- 小节学习 -->
+    <section id="view-section" class="view" hidden></section>
+
+    <!-- 练习 -->
+    <section id="view-exercise" class="view" hidden></section>
+
+    <!-- 项目 -->
+    <section id="view-project" class="view" hidden></section>
+
+    <!-- PDF -->
+    <section id="view-pdf" class="view" hidden>
+      <div class="pdf-bar">
+        <span>《Python编程从入门到实践 第2版》PDF 阅读器（可用上方工具栏翻页/缩放）</span>
+        <button id="pdf-reload" class="btn-small">重新加载</button>
+      </div>
+      <iframe id="pdf-frame" src="/pdf" title="PDF"></iframe>
+    </section>
+
+    <!-- 作业 -->
+    <section id="view-homework" class="view" hidden>
+      <h1>我的作业</h1>
+      <p class="lead">这里保存了你提交过的练习代码，可随时回看。</p>
+      <div id="homework-list"></div>
+    </section>
+
+    <!-- 设置 -->
+    <section id="view-settings" class="view" hidden>
+      <h1>设置</h1>
+      <div class="form-card">
+        <label class="field">
+          <span>参考书 PDF 路径</span>
+          <div class="row">
+            <input id="pdf-path" type="text" placeholder="选择 PDF 文件" />
+            <button id="pdf-choose" class="btn-small">选择文件</button>
+            <input id="pdf-file" type="file" accept=".pdf" hidden />
+          </div>
+        </label>
+        <button id="settings-save" class="btn-primary">保存设置</button>
+      </div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast" hidden></div>
+
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
