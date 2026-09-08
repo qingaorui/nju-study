@@ -1,0 +1,8 @@
+# 仅用于本地打包的 Python 虚拟环境（无需入库）
+buildenv/
+buildenv2/
+
+# 打包中间产物（与根 .gitignore 重复以防移动）
+build/
+__pycache__/
+*.pyc
