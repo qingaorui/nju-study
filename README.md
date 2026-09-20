@@ -1,6 +1,5 @@
 <div align="center">
 
-<img src="https://raw.githubusercontent.com/qingaorui/nju-study/main/NJUClassMate/AppScope/resources/base/media/app_icon.png" width="128" height="128" alt="nju-study">
 
 # 🎓 nju-study
 
