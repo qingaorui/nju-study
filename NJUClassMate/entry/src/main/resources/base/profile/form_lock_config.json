@@ -1,0 +1,25 @@
+{
+  "forms": [
+    {
+      "name": "lockNextClassCard",
+      "displayName": "$string:form_lock_label",
+      "description": "$string:form_lock_desc",
+      "src": "./ets/form/pages/LockScreenCard.ets",
+      "uiSyntax": "arkts",
+      "window": {
+        "designWidth": 720,
+        "autoDesignWidth": true
+      },
+      "colorMode": "auto",
+      "renderingMode": "autoColor",
+      "isDefault": false,
+      "updateEnabled": true,
+      "updateDuration": 1,
+      "defaultDimension": "1*2",
+      "supportDimensions": [
+        "1*2",
+        "1*1"
+      ]
+    }
+  ]
+}

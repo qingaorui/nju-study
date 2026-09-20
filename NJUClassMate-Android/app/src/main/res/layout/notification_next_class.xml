@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  锁屏常驻通知 · 收起态。
+
+  约束（这是 RemoteViews 的硬限制，不是风格选择）：
+    · 只允许 LinearLayout / FrameLayout / RelativeLayout / GridLayout，
+      ConstraintLayout 用不了；
+    · 只允许少数几种 View（TextView / ImageView / Chronometer / ProgressBar …），
+      连 <View> 这种纯占位控件都不在名单里 —— 所以下面的"弹簧"用的是
+      一个空的 TextView 加 layout_weight；
+    · 布局里不要写死颜色。系统在深色模式下通知背景是深的，
+      这里引用的 @color/text_primary 在 values-night 里有对应的浅色版本。
+
+  这里刻意不用 5 行：收起态高度有限（约 76dp），塞太多会被裁掉。
+  多出来的信息（地点、今天还有什么课）放在展开态里。
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/notifRoot"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingTop="2dp"
+    android:paddingBottom="2dp">
+
+    <!-- 第 1 行：状态标签 + 自走秒倒计时 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/notifChip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_chip_blue"
+            android:paddingStart="7dp"
+            android:paddingEnd="7dp"
+            android:paddingTop="2dp"
+            android:paddingBottom="2dp"
+            android:maxLines="1"
+            android:textColor="@color/accent_blue"
+            android:textSize="11sp" />
+
+        <!-- 弹簧：RemoteViews 里不能用 <View>，用空 TextView 顶 -->
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <!--
+          Chronometer 用来做自走秒的倒计时 —— 这是锁屏上最值钱的一行：
+          它由系统自己刷新，不需要我们为了"跳秒"反复重发通知
+          （重发通知会唤醒 CPU、耗电，而且容易被系统限流）。
+        -->
+        <Chronometer
+            android:id="@+id/notifCountdown"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:countDown="true"
+            android:format="%s"
+            android:maxLines="1"
+            android:textColor="@color/accent_blue"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+
+        <!-- 倒计时不可用时（目标太远 / 已经过了）退回静态文案 -->
+        <TextView
+            android:id="@+id/notifRemainStatic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:textColor="@color/accent_blue"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- 第 2 行：课程名 -->
+    <TextView
+        android:id="@+id/notifTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@color/text_primary"
+        android:textSize="17sp"
+        android:textStyle="bold" />
+
+    <!-- 第 3 行：时间 -->
+    <TextView
+        android:id="@+id/notifTime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@color/text_secondary"
+        android:textSize="12sp" />
+
+</LinearLayout>

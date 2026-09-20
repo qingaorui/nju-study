@@ -1,0 +1,25 @@
+{
+  "forms": [
+    {
+      "name": "nextClassCard",
+      "displayName": "$string:form_next_class_label",
+      "description": "$string:form_desc",
+      "src": "./ets/form/pages/NextClassCard.ets",
+      "uiSyntax": "arkts",
+      "window": {
+        "designWidth": 720,
+        "autoDesignWidth": true
+      },
+      "colorMode": "auto",
+      "isDefault": true,
+      "updateEnabled": true,
+      "updateDuration": 1,
+      "scheduledUpdateTime": "07:00",
+      "defaultDimension": "2*2",
+      "supportDimensions": [
+        "2*2",
+        "2*4"
+      ]
+    }
+  ]
+}

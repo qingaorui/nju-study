@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  「今日课表」小组件。
+
+  行不是动态生成的：RemoteViews 不能动态 inflate，
+  所以预置 5 行（row0..row4），由 WidgetUpdater 按实际节数
+  addView / setViewVisibility(GONE) 来控制显示几行。
+  这比接一个 RemoteViewsService + ListView 简单得多，
+  而一天的课最多 5~6 节，够用。
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widgetRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/bg_widget"
+    android:padding="14dp">
+
+    <!-- 头部：日期 + 明天/今天切换 + 周次 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/dateText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:textColor="@color/text_primary"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/toggleLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_chip_blue"
+            android:paddingStart="7dp"
+            android:paddingEnd="7dp"
+            android:paddingTop="2dp"
+            android:paddingBottom="2dp"
+            android:maxLines="1"
+            android:textColor="@color/accent_blue"
+            android:textSize="10sp" />
+
+        <TextView
+            android:id="@+id/weekLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:maxLines="1"
+            android:textColor="@color/text_secondary"
+            android:textSize="11sp" />
+    </LinearLayout>
+
+    <!--
+      分隔线。
+
+      这里**不能**用 <View>：RemoteViews 只允许被 @RemoteView 标注过的控件，
+      而 android.view.View 不在名单里。Android 12 起 RemoteViews 会挂一个
+      LayoutInflater.Filter 把非白名单控件直接拒掉，
+      表现为「加载小组件时崩溃 / 显示不出来」——而且日志里只说
+      "Class not allowed to be inflated android.view.View"，很难联想到是分隔线。
+      所以用一个 1dp 高的 TextView 来画线。
+    -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="2dp"
+        android:background="@color/divider" />
+
+    <!-- 课程行（最多 5 行） -->
+    <LinearLayout
+        android:id="@+id/row0"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" />
+
+    <LinearLayout
+        android:id="@+id/row1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" />
+
+    <LinearLayout
+        android:id="@+id/row2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" />
+
+    <LinearLayout
+        android:id="@+id/row3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" />
+
+    <LinearLayout
+        android:id="@+id/row4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" />
+
+    <TextView
+        android:id="@+id/footerText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:textColor="@color/text_tertiary"
+        android:textSize="10sp" />
+
+</LinearLayout>

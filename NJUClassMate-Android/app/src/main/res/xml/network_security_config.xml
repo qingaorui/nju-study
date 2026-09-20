@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  放开明文 HTTP，但只对南大自己的域名。
+  原因：xk.nju.edu.cn / yjsxk.nju.edu.cn 这两个选课系统确实还在用 http，
+  如果一刀切禁止明文，这两个入口会直接加载失败。
+  其余域名一律强制 HTTPS，避免全局放开带来的风险。
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="false" />
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">nju.edu.cn</domain>
+        <domain includeSubdomains="true">authserver.nju.edu.cn</domain>
+        <domain includeSubdomains="true">ehallapp.nju.edu.cn</domain>
+        <domain includeSubdomains="true">xk.nju.edu.cn</domain>
+        <domain includeSubdomains="true">yjsxk.nju.edu.cn</domain>
+    </domain-config>
+</network-security-config>

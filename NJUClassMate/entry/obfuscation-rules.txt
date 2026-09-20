@@ -1,0 +1,22 @@
+# 混淆规则
+# 卡片和 JSON 序列化的字段名依赖反射式访问，不能改名
+-keep-property-name
+  courseName
+  timeLine
+  location
+  teacher
+  remain
+  statusLabel
+  weekLabel
+  nextHint
+  slotBadge
+  hasClass
+  accent
+  updatedAt
+  dateText
+  countText
+  footerText
+
+-enable-property-obfuscation
+-enable-toplevel-obfuscation
+-enable-filename-obfuscation

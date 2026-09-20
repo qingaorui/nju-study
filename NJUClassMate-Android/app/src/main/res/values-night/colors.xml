@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 深色模式下的配色。主色调保持一致，只调背景和文字。 -->
+<resources>
+    <color name="page_bg">#12141A</color>
+    <color name="surface">#1C1F27</color>
+    <color name="divider">#2C303A</color>
+
+    <color name="text_primary">#ECEFF4</color>
+    <color name="text_secondary">#A3ACBB</color>
+    <color name="text_tertiary">#6E7686</color>
+
+    <color name="chip_blue_bg">#333D7EFF</color>
+    <color name="chip_amber_bg">#33F5A524</color>
+    <color name="chip_gray_bg">#26808080</color>
+
+    <color name="widget_bg">#1C1F27</color>
+</resources>

@@ -1,0 +1,122 @@
+{
+  "module": {
+    "name": "entry",
+    "type": "entry",
+    "description": "$string:module_desc",
+    "mainElement": "EntryAbility",
+    "deviceTypes": [
+      "phone",
+      "tablet",
+      "2in1"
+    ],
+    "deliveryWithInstall": true,
+    "installationFree": false,
+    "pages": "$profile:main_pages",
+    "abilities": [
+      {
+        "name": "EntryAbility",
+        "srcEntry": "./ets/entryability/EntryAbility.ets",
+        "description": "$string:EntryAbility_desc",
+        "icon": "$media:layered_image",
+        "label": "$string:EntryAbility_label",
+        "startWindowIcon": "$media:startIcon",
+        "startWindowBackground": "$color:start_window_background",
+        "exported": true,
+        "skills": [
+          {
+            "entities": [
+              "entity.system.home"
+            ],
+            "actions": [
+              "ohos.want.action.home"
+            ]
+          }
+        ]
+      }
+    ],
+    "extensionAbilities": [
+      {
+        "name": "NextClassFormAbility",
+        "srcEntry": "./ets/form/NextClassFormAbility.ets",
+        "description": "$string:form_desc",
+        "label": "$string:form_next_class_label",
+        "type": "form",
+        "exported": true,
+        "metadata": [
+          {
+            "name": "ohos.extension.form",
+            "resource": "$profile:form_config"
+          }
+        ]
+      },
+      {
+        "name": "TodayFormAbility",
+        "srcEntry": "./ets/form/TodayFormAbility.ets",
+        "description": "$string:form_today_desc",
+        "label": "$string:form_today_label",
+        "type": "form",
+        "exported": true,
+        "metadata": [
+          {
+            "name": "ohos.extension.form",
+            "resource": "$profile:form_today_config"
+          }
+        ]
+      },
+      {
+        "name": "LockScreenFormAbility",
+        "srcEntry": "./ets/form/LockScreenFormAbility.ets",
+        "description": "$string:form_lock_desc",
+        "label": "$string:form_lock_label",
+        "type": "form",
+        "exported": true,
+        "metadata": [
+          {
+            "name": "ohos.extension.form",
+            "resource": "$profile:form_lock_config"
+          }
+        ]
+      },
+      {
+        "name": "RefreshWorkAbility",
+        "srcEntry": "./ets/work/RefreshWorkAbility.ets",
+        "description": "$string:work_desc",
+        "label": "$string:work_label",
+        "type": "workScheduler",
+        "exported": false
+      },
+      {
+        "name": "BootSubscriber",
+        "srcEntry": "./ets/staticsubscriber/BootSubscriber.ets",
+        "description": "$string:boot_subscriber_desc",
+        "label": "$string:boot_subscriber_label",
+        "type": "staticSubscriber",
+        "exported": true,
+        "metadata": [
+          {
+            "name": "ohos.extension.staticSubscriber",
+            "resource": "$profile:static_subscriber_config"
+          }
+        ]
+      }
+    ],
+    "requestPermissions": [
+      {
+        "name": "ohos.permission.INTERNET"
+      },
+      {
+        "name": "ohos.permission.GET_NETWORK_INFO"
+      },
+      {
+        "name": "ohos.permission.PUBLISH_AGENT_REMINDER",
+        "reason": "$string:reason_reminder",
+        "usedScene": {
+          "abilities": [
+            "EntryAbility"
+          ],
+          "when": "always"
+        }
+      }
+    ]
+  }
+}

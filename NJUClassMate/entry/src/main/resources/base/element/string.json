@@ -1,0 +1,60 @@
+{
+  "string": [
+    {
+      "name": "module_desc",
+      "value": "南哪儿课表主模块"
+    },
+    {
+      "name": "EntryAbility_desc",
+      "value": "查看下一节课、今日课表与本周课表"
+    },
+    {
+      "name": "EntryAbility_label",
+      "value": "南哪儿课表"
+    },
+    {
+      "name": "form_next_class_label",
+      "value": "下一节课"
+    },
+    {
+      "name": "form_today_label",
+      "value": "今日课表"
+    },
+    {
+      "name": "form_lock_label",
+      "value": "下一节课（锁屏）"
+    },
+    {
+      "name": "form_desc",
+      "value": "显示下一节课的名称、时间、地点和倒计时"
+    },
+    {
+      "name": "form_today_desc",
+      "value": "显示今天所有课程的时间线"
+    },
+    {
+      "name": "form_lock_desc",
+      "value": "锁屏上快速查看下一节课"
+    },
+    {
+      "name": "work_label",
+      "value": "课表后台刷新"
+    },
+    {
+      "name": "work_desc",
+      "value": "定期重算周次、刷新卡片并重排上课提醒"
+    },
+    {
+      "name": "boot_subscriber_label",
+      "value": "开机初始化"
+    },
+    {
+      "name": "boot_subscriber_desc",
+      "value": "系统启动后恢复课表刷新任务（需系统签名或 MDM 托管）"
+    },
+    {
+      "name": "reason_reminder",
+      "value": "用于在上课前提醒你，避免走错教室或迟到"
+    }
+  ]
+}

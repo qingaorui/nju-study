@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">南哪儿课表</string>
+
+    <!-- 导入页 -->
+    <string name="import_title">导入课表</string>
+    <string name="import_hint_login">请在弹出的页面中登录教务系统</string>
+    <string name="import_hint_to_page">请完成登录，进入「我的课表」页面后会自动读取</string>
+    <string name="import_detected">检测到课表页面，正在自动读取…</string>
+    <string name="import_reload">重新加载</string>
+    <string name="import_extract">手动读取当前页</string>
+    <string name="import_retrying">第 %1$d 次读取未成功，稍后重试…</string>
+    <string name="import_ok">已读取《%1$s》：%2$d 条课程安排</string>
+    <string name="import_saved">导入成功，共 %1$d 条课程安排，小组件已同步</string>
+    <string name="pick_semester_start">选择本学期第一周的任意一天</string>
+
+    <!-- 通知 -->
+    <string name="channel_reminder">上课提醒</string>
+    <string name="channel_reminder_desc">在上课前提醒你，避免走错教室或迟到</string>
+    <string name="channel_lock">锁屏课表</string>
+    <string name="channel_lock_desc">常驻通知，在锁屏上显示下一节课。静音，不会打扰</string>
+    <string name="notify_action_refresh">刷新</string>
+
+    <!-- 小组件 -->
+    <string name="widget_no_timetable">还没有课表</string>
+    <string name="widget_go_import">点这里去导入</string>
+    <string name="widget_need_semester">请先设置开学日期</string>
+    <string name="widget_tap_to_set">点这里打开 App 设置</string>
+    <string name="widget_all_done">最近的课都上完了</string>
+    <string name="widget_next_class">下一节课</string>
+    <string name="widget_today">今日课表</string>
+    <string name="widget_toggle_day_desc">切换今天 / 明天</string>
+    <!-- 选择器里显示在名称下面的说明。两条名字都短，光看名字分不出区别，
+         所以这里必须写清楚各自显示什么、推荐多大尺寸。 -->
+    <string name="widget_next_class_desc">只显示下一节课：课程名、时间地点和倒计时。推荐 2×2 或 4×2</string>
+    <string name="widget_today_desc">今天的全部课程一览，底部还有「明天 / 今天」切换。推荐 4×2 或 4×4</string>
+</resources>

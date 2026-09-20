@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- 白色课表卡片 -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M36,32h36a5,5 0 0 1 5,5v34a5,5 0 0 1 -5,5h-36a5,5 0 0 1 -5,-5v-34a5,5 0 0 1 5,-5z" />
+    <!-- 三条浅色横杠 -->
+    <path android:fillColor="#CED8F0" android:pathData="M39,40h30v4h-30z" />
+    <path android:fillColor="#CED8F0" android:pathData="M39,55h21v4h-21z" />
+    <path android:fillColor="#CED8F0" android:pathData="M39,63h26v4h-26z" />
+    <!-- 高亮那条：代表"正在上的课" -->
+    <path android:fillColor="#3D7EFF" android:pathData="M39,47.5h19v4h-19z" />
+</vector>

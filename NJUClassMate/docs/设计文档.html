@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-page-node-id="7QkhcmfdQXqZE4EpBKKq77">
+<head data-page-node-id="vTRZ3jZXQI9CwECjfjWwRd">
+<meta charset="UTF-8" data-page-node-id="VXfEIDVraZGCp6LnhazRTM">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" data-page-node-id="1pFCGMDCmTDmvOW5bjgHN7">
+<title>南哪儿课表 · 设计文档</title>
+<style>
+  :root{
+    --blue:#3D7EFF; --purple:#7A5BFF; --amber:#F5A524;
+    --ink:#111318; --ink2:#3C4049; --ink3:#6B7280; --ink4:#9AA1AC;
+    --line:#E7E9EE; --line2:#F1F3F7;
+    --bg:#FFFFFF; --bg2:#F7F8FB; --bg3:#EEF2FB;
+    --ok:#12A150; --warn:#E8A33D; --bad:#E5484D;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    color:var(--ink); background:var(--bg2); line-height:1.72;
+    font-size:15px; letter-spacing:.01em;
+  }
+  .wrap{max-width:1000px;margin:0 auto;padding:0 24px 96px}
+
+  /* ---------- 封面 ---------- */
+  .hero{
+    margin:0 -24px 56px; padding:64px 24px 56px;
+    background:linear-gradient(135deg,#3D7EFF 0%,#7A5BFF 100%);
+    color:#fff; position:relative; overflow:hidden;
+  }
+  .hero::after{
+    content:""; position:absolute; right:-120px; top:-120px;
+    width:420px;height:420px;border-radius:50%;
+    background:rgba(255,255,255,.10);
+  }
+  .hero-inner{max-width:952px;margin:0 auto;position:relative;z-index:1}
+  .hero .kicker{
+    display:inline-block;font-size:12px;letter-spacing:.16em;
+    background:rgba(255,255,255,.18);padding:5px 12px;border-radius:999px;
+    margin-bottom:20px;
+  }
+  .hero h1{font-size:38px;line-height:1.25;font-weight:700;letter-spacing:-.01em}
+  .hero p{margin-top:16px;font-size:16px;color:rgba(255,255,255,.9);max-width:640px}
+  .hero .tags{margin-top:28px;display:flex;gap:8px;flex-wrap:wrap}
+  .hero .tags span{
+    font-size:12.5px;background:rgba(255,255,255,.16);
+    padding:6px 12px;border-radius:8px;border:1px solid rgba(255,255,255,.2);
+  }
+
+  /* ---------- 通用 ---------- */
+  section{margin-top:64px}
+  h2{
+    font-size:23px;font-weight:700;letter-spacing:-.01em;
+    padding-bottom:12px;border-bottom:2px solid var(--line);margin-bottom:28px;
+    display:flex;align-items:baseline;gap:12px;
+  }
+  h2 .num{
+    font-size:13px;font-weight:600;color:var(--blue);
+    background:var(--bg3);padding:3px 9px;border-radius:6px;letter-spacing:.04em;
+  }
+  h3{font-size:16.5px;font-weight:650;margin:32px 0 12px;color:var(--ink)}
+  h4{font-size:14.5px;font-weight:600;margin:20px 0 8px;color:var(--ink2)}
+  p{margin:10px 0;color:var(--ink2)}
+  ul,ol{margin:10px 0 10px 22px;color:var(--ink2)}
+  li{margin:6px 0}
+  strong{font-weight:650;color:var(--ink)}
+  code{
+    font-family:"SF Mono",ui-monospace,Menlo,Consolas,monospace;
+    font-size:13px;background:var(--bg3);color:#2B4C9B;
+    padding:2px 6px;border-radius:5px;
+  }
+  pre{
+    background:#1B1F2A;color:#E6E9EF;padding:18px 20px;border-radius:12px;
+    overflow-x:auto;font-size:12.8px;line-height:1.7;margin:14px 0;
+    font-family:"SF Mono",ui-monospace,Menlo,Consolas,monospace;
+  }
+  pre .c{color:#8B94A7}
+  pre .k{color:#7FB2FF}
+  pre .s{color:#8BD98B}
+  .muted{color:var(--ink3);font-size:13.5px}
+
+  /* ---------- 卡片 ---------- */
+  .card{
+    background:var(--bg);border:1px solid var(--line);border-radius:16px;
+    padding:24px;margin:16px 0;
+  }
+  .card.tint{background:var(--bg3);border-color:#DCE6FA}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  @media(max-width:820px){.grid2,.grid3{grid-template-columns:1fr}}
+
+  /* ---------- 表格 ---------- */
+  table{width:100%;border-collapse:collapse;margin:14px 0;font-size:14px}
+  th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line)}
+  th{background:var(--bg3);font-weight:600;font-size:13px;color:var(--ink2);
+     white-space:nowrap}
+  th:first-child{border-radius:9px 0 0 9px}
+  th:last-child{border-radius:0 9px 9px 0}
+  tr:last-child td{border-bottom:none}
+  td code{font-size:12.3px}
+  .tb-wrap{border:1px solid var(--line);border-radius:13px;overflow:hidden;margin:14px 0}
+  .tb-wrap table{margin:0}
+  .tb-wrap th{background:var(--bg2)}
+
+  /* ---------- 流程 ---------- */
+  .flow{display:flex;flex-direction:column;gap:0;margin:20px 0}
+  .step{display:flex;gap:16px;position:relative;padding-bottom:22px}
+  .step:last-child{padding-bottom:0}
+  .step::before{
+    content:"";position:absolute;left:15px;top:34px;bottom:0;width:2px;
+    background:linear-gradient(180deg,#D6E1F8,transparent);
+  }
+  .step:last-child::before{display:none}
+  .step .dot{
+    flex:0 0 32px;height:32px;border-radius:50%;
+    background:var(--bg3);color:var(--blue);font-size:13px;font-weight:700;
+    display:flex;align-items:center;justify-content:center;
+    border:2px solid #D6E1F8;position:relative;z-index:1;background:#fff;
+  }
+  .step.done .dot{background:var(--blue);color:#fff;border-color:var(--blue)}
+  .step .body{flex:1;padding-top:3px}
+  .step .body b{display:block;font-size:14.5px;font-weight:600;color:var(--ink)}
+  .step .body span{font-size:13.4px;color:var(--ink3)}
+
+  /* ---------- 手机 mockup ---------- */
+  .devices{display:flex;gap:34px;flex-wrap:wrap;align-items:flex-start;margin:22px 0}
+  .device{flex:0 0 auto}
+  .device .cap{
+    text-align:center;font-size:12.5px;color:var(--ink3);margin-top:12px;
+  }
+  .phone{
+    width:250px;height:500px;border-radius:34px;background:#0E1117;
+    padding:9px;box-shadow:0 20px 48px rgba(17,19,24,.22),0 2px 8px rgba(17,19,24,.10);
+    position:relative;
+  }
+  .screen{
+    width:100%;height:100%;border-radius:27px;overflow:hidden;
+    position:relative;display:flex;flex-direction:column;
+  }
+  /* 锁屏 */
+  .lock{
+    background:
+      radial-gradient(120% 70% at 50% 0%,#2A3A6B 0%,#141826 55%,#0B0E15 100%);
+    color:#fff;padding:22px 16px;align-items:center;
+  }
+  .lock .time{font-size:52px;font-weight:200;letter-spacing:-.02em;line-height:1;margin-top:26px}
+  .lock .date{font-size:13px;color:rgba(255,255,255,.72);margin-top:6px}
+  .lock-widget{
+    margin-top:auto;margin-bottom:60px;width:100%;
+    background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.16);
+    backdrop-filter:blur(20px);border-radius:18px;padding:14px 16px;
+  }
+  .lock-widget .lb{font-size:10.5px;color:rgba(255,255,255,.66);letter-spacing:.06em}
+  .lock-widget .ln{font-size:17px;font-weight:600;margin-top:4px;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .lock-widget .row{display:flex;justify-content:space-between;align-items:baseline;margin-top:5px}
+  .lock-widget .lt{font-size:12px;color:rgba(255,255,255,.72)}
+  .lock-widget .lr{font-size:12px;font-weight:600;color:#8FB6FF}
+  .lock-widget .ll{font-size:12px;color:rgba(255,255,255,.72);margin-top:2px}
+  /* 桌面 */
+  .home{
+    background:linear-gradient(160deg,#EEF2FB 0%,#E4EAF8 55%,#DDE6F9 100%);
+    padding:18px 14px;
+  }
+  .home .hgrid{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:12px 10px;margin-top:6px;
+  }
+  .appicon{
+    display:flex;flex-direction:column;align-items:center;gap:5px;
+  }
+  .appicon .sq{
+    width:42px;height:42px;border-radius:12px;
+    background:linear-gradient(135deg,#3D7EFF,#7A5BFF);
+    box-shadow:0 3px 10px rgba(61,126,255,.32);
+    display:flex;align-items:center;justify-content:center;gap:2.5px;flex-direction:column;
+    padding:8px;
+  }
+  .appicon .sq i{display:block;height:3.4px;border-radius:2px;background:rgba(255,255,255,.92);width:100%}
+  .appicon .sq i.hl{background:#fff;width:60%}
+  .appicon .sq i.dim{background:rgba(255,255,255,.55)}
+  .appicon em{font-size:9px;color:#4A5568;font-style:normal}
+  /* 桌面卡片 */
+  .dw{
+    grid-column:span 2;background:#fff;border-radius:16px;padding:13px 14px;
+    box-shadow:0 6px 18px rgba(23,43,77,.10);border:1px solid rgba(255,255,255,.9);
+    display:flex;flex-direction:column;
+  }
+  .dw.wide{grid-column:span 4}
+  .dw .top{display:flex;justify-content:space-between;align-items:center}
+  .dw .wk{font-size:10.5px;color:var(--ink4)}
+  .dw .chip{font-size:9.5px;font-weight:600;color:var(--blue);
+    background:rgba(61,126,255,.10);padding:2px 6px;border-radius:6px}
+  .dw .chip.amber{color:#B77613;background:rgba(245,165,36,.16)}
+  .dw .cn{font-size:15px;font-weight:700;color:var(--ink);margin-top:7px;
+    line-height:1.32;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .dw .tl{font-size:11px;color:var(--ink3);margin-top:6px}
+  .dw .bt{display:flex;justify-content:space-between;align-items:baseline;margin-top:3px}
+  .dw .lc{font-size:11px;color:var(--ink3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
+  .dw .rm{font-size:11px;font-weight:600;color:var(--blue);margin-left:6px}
+  .dw .hint{font-size:9.5px;color:var(--ink4);margin-top:4px;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  /* 今日卡片 */
+  .trow{display:flex;gap:8px;padding:4px 0;align-items:center}
+  .trow .tt{font-size:10.5px;color:var(--ink3);width:38px;flex:0 0 38px;
+    font-variant-numeric:tabular-nums}
+  .trow .tn{font-size:11.5px;font-weight:500;color:var(--ink);flex:1;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .trow .tl2{font-size:9.5px;color:var(--ink4);
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:78px}
+  .trow.now .tn{font-weight:700;color:var(--blue)}
+  .trow.done .tn,.trow.done .tl2{color:var(--ink4);text-decoration:line-through}
+  .dw .ft{font-size:9.5px;color:var(--ink4);margin-top:6px;padding-top:6px;
+    border-top:.5px solid var(--line2)}
+
+  /* ---------- 周课表 mockup ---------- */
+  .tgrid{background:#fff;border:1px solid var(--line);border-radius:14px;
+    padding:14px;overflow-x:auto}
+  .tgrid table{border-collapse:separate;border-spacing:3px;font-size:10px;margin:0}
+  .tgrid th{padding:0;background:none;font-size:10px;color:var(--ink4);
+    text-align:center;font-weight:500;width:64px;border:none}
+  .tgrid td{
+    padding:0;height:46px;vertical-align:top;border:none;border-radius:5px;
+    background:var(--bg2);width:64px;
+  }
+  .tgrid td.tl3{background:none;width:30px;text-align:center;font-size:9.5px;
+    color:var(--ink4);line-height:1.25;padding-top:3px}
+  .tgrid .b{
+    height:100%;border-radius:5px;padding:4px 5px;color:#fff;font-size:9.6px;
+    line-height:1.3;overflow:hidden;display:flex;flex-direction:column;
+  }
+  .tgrid .b b{font-weight:600;display:block;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .tgrid .b i{font-style:normal;color:rgba(255,255,255,.8);font-size:8.6px;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .tgrid .b.cf{padding-right:18px}
+  .tgrid .b .flag{position:absolute;right:4px;top:4px;background:#FF4D4F;
+    color:#fff;font-size:8px;border-radius:3px;padding:0 3px}
+  .tgrid .cellwrap{position:relative;display:flex;gap:2px;height:100%}
+
+  /* ---------- 标签 ---------- */
+  .pill{display:inline-block;font-size:12px;font-weight:600;padding:3px 9px;
+    border-radius:999px}
+  .pill.ok{background:rgba(18,161,80,.10);color:var(--ok)}
+  .pill.warn{background:rgba(232,163,61,.14);color:#A9761E}
+  .pill.bad{background:rgba(229,72,77,.10);color:var(--bad)}
+  .pill.info{background:var(--bg3);color:var(--blue)}
+
+  .note{
+    border-left:3px solid var(--warn);background:#FFFBF2;border-radius:0 11px 11px 0;
+    padding:15px 18px;margin:16px 0;
+  }
+  .note.bad{border-left-color:var(--bad);background:#FFF6F6}
+  .note.good{border-left-color:var(--ok);background:#F4FCF7}
+  .note b{display:block;margin-bottom:5px;font-size:14px}
+  .note p{font-size:13.4px;margin:4px 0}
+
+  .kv{display:grid;grid-template-columns:150px 1fr;gap:8px 18px;font-size:13.6px}
+  .kv dt{color:var(--ink3)}
+  .kv dd{color:var(--ink2)}
+  @media(max-width:640px){.kv{grid-template-columns:1fr;gap:2px 0}
+    .kv dd{margin-bottom:8px}}
+
+  .stat{text-align:center;padding:20px 12px;background:#fff;
+    border:1px solid var(--line);border-radius:14px}
+  .stat b{display:block;font-size:28px;font-weight:700;color:var(--blue);
+    line-height:1.1;font-variant-numeric:tabular-nums}
+  .stat span{font-size:12.5px;color:var(--ink3)}
+
+  footer{margin-top:72px;padding-top:24px;border-top:1px solid var(--line);
+    color:var(--ink3);font-size:13px}
+</style>
+</head>
+<body data-page-node-id="oMxLR9oqguSL4mEG4MuW2H">
+
+<div class="hero" data-page-node-id="Ii8hCeJFDxbjafEzkiv6O7">
+  <div class="hero-inner" data-page-node-id="ODSvayS7K9RmLkdBmA5Trv">
+    <span class="kicker" data-page-node-id="94bH0yo8dEpsXjm3slR17p">HARMONYOS · ARKTS · STAGE 模型</span>
+    <h1 data-page-node-id="EBuOyec1V47iapxiXVFbo0">南哪儿课表<br data-page-node-id="T7jNVcSpAKn6vGzo08aruY">NJU ClassMate</h1>
+    <p data-page-node-id="FGWBdN1jLVDXZ0cFuV7giJ">南京大学课表助手。打开就是下一节课——桌面与锁屏卡片常驻显示"下一节是什么课、几点、在哪"，
+       不用打开 App，不用解锁。</p>
+    <div class="tags" data-page-node-id="qVXdz7g6kTCkgloY5jry26">
+      <span data-page-node-id="MIgSJfOAF1xijWlTyIZvV8">内置浏览器抓取</span>
+      <span data-page-node-id="nrdUK1C70WrWeTFACMpaSD">桌面 2×2 / 2×4 卡片</span>
+      <span data-page-node-id="ndCX8KJXIKGQXbj6CONU1s">锁屏 1×2 卡片</span>
+      <span data-page-node-id="rtmXWo68ox4lzXrQ7TE9CY">系统级上课提醒</span>
+      <span data-page-node-id="tUqLvBmIkDpdSV5vJGEOGC">导出 .ics 到日历</span>
+      <span data-page-node-id="LPbuIefqZzS0Djev6guLCh">157 项离线断言</span>
+    </div>
+  </div>
+</div>
+
+<div class="wrap" data-page-node-id="LVggGvLYJKzShXmB3H2Jdu">
+
+<!-- ============ 01 效果 ============ -->
+<section data-page-node-id="GdEJWSJTJP1IM5U61AzEnc">
+  <h2 data-page-node-id="eZgYRvQ6E3nm6S47YY1ZJR"><span class="num" data-page-node-id="y9pIreu99p1ftmJA51gcQ9">01</span>长什么样</h2>
+
+  <div class="devices" data-page-node-id="S5K3NNYZFcTpg3fmvvDEWb">
+    <!-- 锁屏 -->
+    <div class="device" data-page-node-id="YPxsEH55O9EQCKjbCJ9KYZ">
+      <div class="phone" data-page-node-id="cFbGM1euPp9RA0SH5HE5ot">
+        <div class="screen lock" data-page-node-id="TmNrZ3xOX9YsFQXA8RTG6C">
+          <div class="time" data-page-node-id="LBmtixTIpk7nFxLacs0vRE">14:06</div>
+          <div class="date" data-page-node-id="m6Gf5R331n4zPMubybNDUg">9 月 18 日 星期五</div>
+          <div class="lock-widget" data-page-node-id="82YDwHUtei103jdEYVpqtm">
+            <div class="lb" data-page-node-id="datxeZpGeYj2daHdGqHkoK">正在上课</div>
+            <div class="ln" data-page-node-id="to4FYNZFMorDtnAighCkjo">形势与政策</div>
+            <div class="row" data-page-node-id="dS2pdJBfTwY2DRidIDcTbG">
+              <span class="lt" data-page-node-id="hJT30iFhOJIhYgFLoQqjl8">周五 第9-10节 · 18:30-20:20</span>
+              <span class="lr" data-page-node-id="iXF9TBU0GxSK1grKa5pR8M">还剩 1 小时 14 分</span>
+            </div>
+            <div class="ll" data-page-node-id="F3MqJkrAC1bQ6oUZcSWI39">仙Ⅱ-201</div>
+          </div>
+        </div>
+      </div>
+      <div class="cap" data-page-node-id="WJhb9fJS0ykTiZX8soogyv">锁屏卡片 1×2（API 18+）</div>
+    </div>
+
+    <!-- 桌面 -->
+    <div class="device" data-page-node-id="CTruJfYAt8NpfYlbshGokt">
+      <div class="phone" data-page-node-id="zV9S6sLYrlKOuW3y6nLA4C">
+        <div class="screen home" data-page-node-id="YJLGccHbX6bTbPgFfCABFi">
+          <div class="hgrid" data-page-node-id="Oayw8xLAG1u7gHxolPeXHX">
+            <div class="appicon" data-page-node-id="vUA1ovTchbxqupZLaeyVfE">
+              <div class="sq" data-page-node-id="4dSYavWTQNEXu77fMloeTl"><i data-page-node-id="vchowyUzBlJQyFDbwmcIdE"></i><i class="hl" data-page-node-id="GYEZThs6TAKchZuXBEOEYf"></i><i class="dim" data-page-node-id="919tp0WyDFovTwNTSaELKn"></i><i class="dim" data-page-node-id="8bZfFWQCf9XAR19slI7E6R"></i></div>
+              <em data-page-node-id="0n7v74Wdevl1r38HimrA8i">课表</em>
+            </div>
+            <div class="appicon" data-page-node-id="27tHYxha3JLs3hHpSZUbD6">
+              <div class="sq" style="background:linear-gradient(135deg,#DDE3EC,#C7CFDB);box-shadow:none" data-page-node-id="NqWeCLcr5jLUzk1rzZoxwQ">
+                <i style="background:rgba(255,255,255,.9)" data-page-node-id="r93xm8hbjXJiKkwYJa8wzW"></i><i class="hl" style="background:#fff" data-page-node-id="BFUL3reUf4ttX7gCk8l9IO"></i>
+              </div>
+              <em data-page-node-id="9MEwRGRIYg2jdf5YCCO3NF">设置</em>
+            </div>
+            <div class="appicon" data-page-node-id="GywCe132MU7FLxEGvyd2J7">
+              <div class="sq" style="background:linear-gradient(135deg,#DDE3EC,#C7CFDB);box-shadow:none" data-page-node-id="WGqiy7HkgGAKyui7XjlEFE">
+                <i style="background:rgba(255,255,255,.9)" data-page-node-id="k3mfGlE8nIvxKA5AVCyTh6"></i><i class="hl" style="background:#fff" data-page-node-id="4qpYjE9TyG8yPGz2QSy54G"></i>
+              </div>
+              <em data-page-node-id="rWG44AJVLCa0cG66M7pH9y">日历</em>
+            </div>
+            <div class="appicon" data-page-node-id="9pWf9sBFkAfnm35MSl5oah">
+              <div class="sq" style="background:linear-gradient(135deg,#DDE3EC,#C7CFDB);box-shadow:none" data-page-node-id="WmRSjQLsdbd8T60ZCutD5R">
+                <i style="background:rgba(255,255,255,.9)" data-page-node-id="EjCQXKWmX1xuGHlDrTTy8j"></i><i class="hl" style="background:#fff" data-page-node-id="v7a6m9tcGLMkXqPoLpJ8y5"></i>
+              </div>
+              <em data-page-node-id="XjJBsvtUC5groLUFxHvD2O">相册</em>
+            </div>
+
+            <!-- 下一节课卡片 -->
+            <div class="dw" data-page-node-id="ENe66FNACVoQ2MnUb2sMvk">
+              <div class="top" data-page-node-id="8OuOdqdp95fNj87puYHNFA">
+                <span class="wk" data-page-node-id="WlVz4B4OZFBlZWUDxASNHh">第 3 周</span>
+                <span class="chip amber" data-page-node-id="0qgOSoAGmUasr2pxavzs4V">正在上课</span>
+              </div>
+              <div class="cn" data-page-node-id="Jtd6vZ0V4uIyqIzMKmNPC3">形势与政策</div>
+              <div class="tl" data-page-node-id="9zSJefaXDCi0fUeniJFrhT">周五 第9-10节 · 18:30-20:20</div>
+              <div class="bt" data-page-node-id="EbFRHurCaLbk55E8nidHWt">
+                <span class="lc" data-page-node-id="mOI6lKOhesbazpFpxVQxDr">仙Ⅱ-201</span>
+                <span class="rm" data-page-node-id="UlyGMRm6kwAFXERJBvbrne">还剩 74 分钟</span>
+              </div>
+              <div class="hint" data-page-node-id="it9ZsFfb5Zz4Hd82J3adTK">下一节 高等数学 · 周一 08:00</div>
+            </div>
+
+            <!-- 今日课表卡片 -->
+            <div class="dw" style="grid-column:span 2" data-page-node-id="AWsAgR7dWZRom7awDZbtMu">
+              <div class="top" data-page-node-id="ZtztYQBzZ1yyNFb1Kw7xnp">
+                <span class="wk" style="font-size:12px;font-weight:700;color:#111318" data-page-node-id="aV4fPhChpI7p8SD8qKofwY">9月18日</span>
+                <span class="wk" data-page-node-id="teAZaHaAe6eBp6J9DqwyOe">第 3 周</span>
+              </div>
+              <div class="trow done" data-page-node-id="v5IiERuKiSfm2rFncCMmKq">
+                <span class="tt" data-page-node-id="QsfrcGKFkI3ACrh3kB4nUA">08:00</span><span class="tn" data-page-node-id="ndZfH5tereGTMVaslAJvYE">大学英语</span><span class="tl2" data-page-node-id="IwUT8XIU4llGgPzkzqPVg8">仙Ⅱ-105</span>
+              </div>
+              <div class="trow done" data-page-node-id="vZ5tPCl1zPGGiuFz7YA2F7">
+                <span class="tt" data-page-node-id="rauzdpSK45wYftpRsqrET1">10:10</span><span class="tn" data-page-node-id="52H8qgePyiCGaikMuqlmus">高等数学</span><span class="tl2" data-page-node-id="Y4JWaXQnZmQyediPvgS4BQ">仙Ⅱ-304</span>
+              </div>
+              <div class="trow now" data-page-node-id="kwwVEpsceOBv6yMvXLxaTE">
+                <span class="tt" data-page-node-id="67CxQQNnDB33otRFWqgX2L">18:30</span><span class="tn" data-page-node-id="DFAYglJvmsWnMZwRZBGA6C">形势与政策</span><span class="tl2" data-page-node-id="0npXnzJ3Td7ljGRtE4W9bS">仙Ⅱ-201</span>
+              </div>
+              <div class="ft" data-page-node-id="jj0hgG28x0JIoZFzx5mK3H">共 3 节 · 下一节 18:30</div>
+            </div>
+
+            <div class="appicon" data-page-node-id="9Afk1os1XeXxYBDzMD3MyB"><div class="sq" style="background:linear-gradient(135deg,#DDE3EC,#C7CFDB);box-shadow:none" data-page-node-id="mp039D3aZroRCbFY1XucMU"><i style="background:rgba(255,255,255,.9)" data-page-node-id="GuX1FAuZL3SOont2hHVCmH"></i><i class="hl" style="background:#fff" data-page-node-id="ePerE62XdLu2bw224QEndJ"></i></div><em data-page-node-id="eYWBZGDzsYVOhG2ZQrF84b">浏览器</em></div>
+            <div class="appicon" data-page-node-id="QCapNOP7swO8vdrJRNFYdI"><div class="sq" style="background:linear-gradient(135deg,#DDE3EC,#C7CFDB);box-shadow:none" data-page-node-id="UA4cNhEC0Cf92z0aoS9kKB"><i style="background:rgba(255,255,255,.9)" data-page-node-id="s0hZE5x2ADpMK7lsop7iha"></i><i class="hl" style="background:#fff" data-page-node-id="1VkJBg8J7hBHdgltMheeLS"></i></div><em data-page-node-id="4aGOHfoWbMOgLkPKz5CWWg">音乐</em></div>
+            <div class="appicon" data-page-node-id="HJMOuZX66wGDQt0SVbCuEe"><div class="sq" style="background:linear-gradient(135deg,#DDE3EC,#C7CFDB);box-shadow:none" data-page-node-id="HuaaiOhRa9Hjl2pyTzK370"><i style="background:rgba(255,255,255,.9)" data-page-node-id="DQSnQ8y1gCQq1q4tj8wA2U"></i><i class="hl" style="background:#fff" data-page-node-id="mAl2eMpEPp1f1gkqKct11a"></i></div><em data-page-node-id="c9Wg122BYwvC17WjHGoyrv">天气</em></div>
+            <div class="appicon" data-page-node-id="fF7uxc3ufU9N4gP4O0EINe"><div class="sq" style="background:linear-gradient(135deg,#DDE3EC,#C7CFDB);box-shadow:none" data-page-node-id="IhR8iNhqOxYiHR9eu1IyvT"><i style="background:rgba(255,255,255,.9)" data-page-node-id="gSUCTGLHrHl02Gtc5xcClz"></i><i class="hl" style="background:#fff" data-page-node-id="CeIQLJkhs4IH4cT69uhJqz"></i></div><em data-page-node-id="KEioEGyuAT7n3fAhVYZxvP">备忘录</em></div>
+          </div>
+        </div>
+      </div>
+      <div class="cap" data-page-node-id="kFQmVAH9dSBRHKsdF9ooCT">桌面卡片 2×2 + 2×4</div>
+    </div>
+
+    <!-- 周课表 -->
+    <div class="device" style="flex:1;min-width:380px" data-page-node-id="6D3UumbBrTb4Dn46pjzLpN">
+      <div class="tgrid" data-page-node-id="ZUK8q1ne3rlhcNY5LWT52k">
+        <table data-page-node-id="dwoAHNsMYiijyVwUpqjffU">
+          <tr data-page-node-id="Z8rhz7wVIoRDMCnC61S9hn">
+            <th data-page-node-id="oZpH1na8Rl2Dk2PXaAaoii"></th><th data-page-node-id="Fe6XAzfBBYePkjgKezg3Oi">周一</th><th data-page-node-id="bmFJlIQPil2q5SbMv4faCl">周二</th><th data-page-node-id="rrvCnj2VWMCBQ1M8m5GJZz">周三</th><th data-page-node-id="1tJmjMiFTYEHjYGgBcsABV">周四</th><th data-page-node-id="aAGrNjyRtH3z9DfJJiaTHe">周五</th>
+          </tr>
+          <tr data-page-node-id="JcUEWemBdRp3IH2oFduTlU">
+            <td class="tl3" data-page-node-id="PGG90vlMDE9lFOCy59MD8Y">1<br data-page-node-id="EbQKi0vPzGMPqHgjdNbX3n">08:00</td>
+            <td data-page-node-id="AWRailRU04HpFFCV4tGr73"><div class="cellwrap" data-page-node-id="FqcwkZqD6iJOY4loDsg7B1">
+              <div class="b" style="flex:1;background:#5B8FF9" data-page-node-id="UsDLewHCHtuPHNjBvINFzf"><b data-page-node-id="8qBjMsXa6zt9S7ojPd6ynP">高等数学</b><i data-page-node-id="6auR7zTSA603GkH5zNAKYW">仙Ⅱ-304</i></div>
+              <div class="b" style="flex:1;background:#61DDAA" data-page-node-id="44UlyYoCkHAmxVLQSrhuTe"><b data-page-node-id="4vzzqTeAeE6Mav4nsFwo33">数据结构</b><i data-page-node-id="xKcpXwgIKhWC9n4EEYWOPK">仙Ⅱ-305</i><span class="flag" data-page-node-id="8jNS48LLpTHFwmgieoQY8S">冲</span></div>
+            </div></td>
+            <td data-page-node-id="vqsJj9JqTibx71lyhUnxVC"></td><td data-page-node-id="9n0CtC16SKkWgUZRuhEm3o"></td><td data-page-node-id="GEzzwLYywVLavNQ6ALtpaF"></td><td data-page-node-id="CuidWqYgxud20jemYSGrju"></td>
+          </tr>
+          <tr data-page-node-id="zPwoCkYTiH0l9wH6ZXcYaC">
+            <td class="tl3" data-page-node-id="u6uvmeu9BoFB2x3jQGztDT">2<br data-page-node-id="Z6n6QOQzJ1ICaf0HkTG1fY">09:00</td>
+            <td data-page-node-id="7j40eA3ABcoxeIES1oC5yx"></td><td data-page-node-id="83FArD17lD4Ow2NXMEp3a8"></td><td data-page-node-id="z1sFydMhVCyfpOqHajsR6E"></td><td data-page-node-id="Y0FM2Rftqr0VoL67AhdkRM"></td><td data-page-node-id="4DCZmH1URQsmrBVQHB3gDJ"></td>
+          </tr>
+          <tr data-page-node-id="8JdONV1q2yPqeUDS2ZADDd">
+            <td class="tl3" data-page-node-id="sDsFAqyTD0JXpHBDZA4EIU">3<br data-page-node-id="9F7F0IWa4DtzDCy1SOMABe">10:10</td>
+            <td data-page-node-id="etuWqPprMUeuT7aVdGdrA8"></td>
+            <td data-page-node-id="hxFqEnBtfeHAvv3V4hqrHk"><div class="b" style="background:#F6BD16" data-page-node-id="bKFmbweVeVinOeKFQ6BUTb"><b data-page-node-id="wc1WIKShEWJpqSzovYXnwg">线性代数</b><i data-page-node-id="qiUxmC2plfgj4Lo7q5CMCd">仙Ⅱ-201</i></div></td>
+            <td data-page-node-id="5JdzGOsf5LujrNDyvVFW9L"></td><td data-page-node-id="PVznI5A2AsB0UfabmcWej7"></td><td data-page-node-id="bH2D5OUN6Fo2ib82bvDpbZ"></td>
+          </tr>
+          <tr data-page-node-id="vW32w1xG5wJ0GvE12ciMuA">
+            <td class="tl3" data-page-node-id="VQDmZbpNA0B22wZ9BvdqIU">4<br data-page-node-id="kOjglgm040KQe8Ehn2E0mD">11:10</td>
+            <td data-page-node-id="UhyrGxepYAaiZb8CZ1mmUr"></td><td data-page-node-id="i2NP0P13DrbgIYEFVzhgwK"></td><td data-page-node-id="ibE0RlGIvuhDtLS5MLpYhi"></td><td data-page-node-id="1I3VsICKGJazqAA2Gw0HTa"></td><td data-page-node-id="yIrVsQ3ZATfnbAjzDDAygT"></td>
+          </tr>
+          <tr data-page-node-id="88YOs5dqHvOn2MNB6Or5jI">
+            <td class="tl3" data-page-node-id="GNx8n7NPKzqH7t7jKp2vcp">5<br data-page-node-id="MvkPkKoS1yApUOZEZab3Yi">13:30</td>
+            <td data-page-node-id="DfoKa9TiEschHb0fdaEvYW"></td><td data-page-node-id="kcGsCPAMskgCa1Lirx6PqF"></td>
+            <td data-page-node-id="41RXCVQZVlvJO4aaDapDaW"><div class="b" style="background:#7262FD" data-page-node-id="aNjMffomDvgVFxDNZLQVOP"><b data-page-node-id="ZZ1LlGTGZyRUHiJXVwpugt">大学物理</b><i data-page-node-id="LJqAVAuV15shD6ZE4rKhqU">仙1-216</i></div></td>
+            <td data-page-node-id="I8I12rC6v4vADyYldcSS4W"></td><td data-page-node-id="jIfUunUDC1DHPCdYcLWy6m"></td>
+          </tr>
+          <tr data-page-node-id="GsDDhy51Mpbi1BAxGzxKmG">
+            <td class="tl3" data-page-node-id="ZFAutgsoHNv4mlYswHGkAz">6<br data-page-node-id="vxP5dC5hghfvii8e0qKwou">14:30</td>
+            <td data-page-node-id="yrssWKIjDSP03eZl6uxOw6"></td><td data-page-node-id="9AyIPZrCpdmYU41SC8UZI1"></td><td data-page-node-id="uBEESbMUD3c9W3450Uom9e"></td><td data-page-node-id="8DMeWpWDYPQ8aKlmokZ6hq"></td><td data-page-node-id="eTJEbJjIGThcKYaAudfxs8"></td>
+          </tr>
+          <tr data-page-node-id="vqs6Bbz3ylfxd1jy8bvKT3">
+            <td class="tl3" data-page-node-id="TQ8V2WP0P0vyWM9kY54wUf">7<br data-page-node-id="MHnWHFnRq4YI1SclHEg1xz">15:40</td>
+            <td data-page-node-id="C9mD8BoXuxBqJ0zDpXXrB0"></td><td data-page-node-id="O6qLokSrKJkUDfwIbzXiFt"></td><td data-page-node-id="6NfYdM3ypiHcb1PwH4ltQb"></td>
+            <td data-page-node-id="VLRhJ3QTqrdUrs0TE8GbaD"><div class="b" style="background:#78D3F8" data-page-node-id="xTwsI9kgZAJnl9PBcplRTS"><b data-page-node-id="v12YCaBYWSQVE5jSjeCHxz">大学英语</b><i data-page-node-id="d2BLgqvAZfLpdTkMAvEoWj">仙Ⅱ-105</i></div></td>
+            <td data-page-node-id="axvAEtMiH26wR3JZyTSZjm"></td>
+          </tr>
+          <tr data-page-node-id="Q2i5S0axpLpciAGV75b7jY">
+            <td class="tl3" data-page-node-id="RDAot7fcc2W3vpAeoC1peP">8<br data-page-node-id="bsDD1VKESEpSw0AbnfNuyI">16:40</td>
+            <td data-page-node-id="HC08sag8ODNncza37Hp8AK"></td><td data-page-node-id="zbVcnn88StFjHAnzpH3Put"></td><td data-page-node-id="gwKlRDKxrBT6hKAPEzQvBF"></td><td data-page-node-id="pDk0SPWiCG0C9eDbi2o75e"></td><td data-page-node-id="qSNE2vMNzR462p4lIwLIvn"></td>
+          </tr>
+          <tr data-page-node-id="HjNwx7HXHTjOAucHBSX0tH">
+            <td class="tl3" data-page-node-id="Y89Ay2B4Yy1blnf0bBw7nW">9<br data-page-node-id="sTdfJ1SmpOUgKRNMm7nuGZ">18:30</td>
+            <td data-page-node-id="uDmVtXkbL9cosxHUcLGG0i"></td><td data-page-node-id="HL9BghJbAjqPN7KhCAfWcb"></td><td data-page-node-id="OZsf9OICR1qHtukIzJAV7f"></td><td data-page-node-id="UcFPxpRqL930fG0CBOmpqb"></td>
+            <td data-page-node-id="ousysoQ2MJzJufiebQ2Y9n"><div class="b" style="background:#9661BC" data-page-node-id="WoINYuHj08CALGm4kdbyIN"><b data-page-node-id="BgVclkBKDAUIOE5IwzCeU7">形势与政策</b><i data-page-node-id="bKQBIY51IZE1jDaFWmUiVb">仙Ⅱ-201</i></div></td>
+          </tr>
+          <tr data-page-node-id="dOA6be2xOxxk5nC1kUcWFo">
+            <td class="tl3" data-page-node-id="ZERODtUcDijPvchKCTyF2W">10<br data-page-node-id="JpEEGKEf9oDENUVpahJLlE">19:30</td>
+            <td data-page-node-id="VmYe2SSzXy0AEka4qu43da"></td><td data-page-node-id="MGkjlYzCQr2IQY1XnAo8Mi"></td><td data-page-node-id="dHiBopKAPV0AHj08zlgEce"></td><td data-page-node-id="NftBWSrfinUliwvQWp3tgQ"></td><td data-page-node-id="3MGipcVBy7uw0fdxqZtMzw"></td>
+          </tr>
+        </table>
+      </div>
+      <div class="cap" style="text-align:left;margin-top:14px" data-page-node-id="x59Z0K2l3BG2HW9WmZtEEz">
+        周课表：同一格里的两门课是<span class="pill bad" data-page-node-id="XpndLJo8gWoFTHlwdhNvN7">免修不免考</span>冲突，
+        并排显示并打「冲」角标。课程按课程号稳定哈希配色，每次打开颜色一致。
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 02 数据流 ============ -->
+<section data-page-node-id="17wzMtm6BZIectfqrsDfXF">
+  <h2 data-page-node-id="6R51Z1eF1NYHNv7WUv6dUB"><span class="num" data-page-node-id="gWszzMDJJEeRNlvyEi1qgC">02</span>课表是怎么拿到的</h2>
+
+  <p data-page-node-id="1tUoZfQ4Raelnato9k4grD">参考 <a href="https://nju.app/" style="color:var(--blue)" data-page-node-id="vitOaHFSMpVEkhBTDWDNaq">nju.app（南哪课表）</a> 的思路：
+     <strong data-page-node-id="ueFA4Q0rwARF4EeegL7rxu">不碰接口，只读页面</strong>。教务系统挂在统一身份认证后面，自己实现票据流转要处理
+     加密参数和风控，既脆弱又踩线；让用户在真实浏览器里登录一次、再读已经渲染好的表格，
+     成本最低、最稳，也最尊重用户的账号安全。</p>
+
+  <div class="flow" data-page-node-id="lHAPlAoENBzUcuFYZPtEba">
+    <div class="step done" data-page-node-id="PqWe76ItvgjD2dvYseMEZo"><div class="dot" data-page-node-id="AbHRJbGSQy6SEVGYRsJFRa">1</div><div class="body" data-page-node-id="KRPQC2hQjkixZHbDWFHu2d">
+      <b data-page-node-id="m457hJDYNkFvzYjZolxgjT">点击「一键导入课表」</b>
+      <span data-page-node-id="pA1HUaPi4Qt8zYV9PXTMna">内置 Web 组件加载统一身份认证登录页</span>
+    </div></div>
+    <div class="step done" data-page-node-id="cebxUmvzbDujofPaIEKO1A"><div class="dot" data-page-node-id="wq187nn063h6331JlaZNkq">2</div><div class="body" data-page-node-id="H5WBs3dAGKGHqvz3nlbGCS">
+      <b data-page-node-id="veNM6DG73DUNOfcQDK8zlB">用户自己在官方页面登录</b>
+      <span data-page-node-id="x3wy0I0PacY7PW7OOD8Cj6">应用全程<strong data-page-node-id="LU6HjJS8Mlrk7gDTVv14Yl">不接触、不存储</strong>账号密码，登录完全发生在 nju.edu.cn 域下</span>
+    </div></div>
+    <div class="step done" data-page-node-id="6r8oFa79wAZ3piwopqN5PB"><div class="dot" data-page-node-id="hXmGEpAEDsJlnMif4rD1N3">3</div><div class="body" data-page-node-id="0HBnoNimCcO5sAZflxcuVh">
+      <b data-page-node-id="L2TYFvQuoX6h5RaPkg919H">跳转到「我的课表」，URL 命中目标</b>
+      <span data-page-node-id="Ndef6xmleUIIe3FPBFOz7Q"><code data-page-node-id="J0ZFAauJQs9Ro3x9JZ7iLP">onPageEnd</code> 检测到 <code data-page-node-id="xokKK4fvy1UoLqgvtBseJm">ehallapp.nju.edu.cn/jwapp/sys/wdkb</code>，自动触发读取</span>
+    </div></div>
+    <div class="step done" data-page-node-id="YKhKTi3KKUdVhkxFW3unlE"><div class="dot" data-page-node-id="bnOtU6OsIfYCrmlqoAJTW7">4</div><div class="body" data-page-node-id="Vf9SHo656kyqOMOYYWFrry">
+      <b data-page-node-id="zodUeMKiS841VLUxfD5KEH">注入 <code data-page-node-id="VvpjQ1SkF29tsGmUlI9HAt">rawfile/njubksjw.js</code></b>
+      <span data-page-node-id="qH4WAZrWvhFd7BKK1SDSKx">读 <code data-page-node-id="hFTuxuGGB1qDvCZ2GszuGP">#dqxnxqkclb</code> 拿学期名，逐行解析 <code data-page-node-id="CbLGAG4dIGH6kaFxvVqE5N">table tbody tr</code>。
+            教务系统表格是异步渲染的，所以自带 4 次重试（每次隔 1.2 秒）</span>
+    </div></div>
+    <div class="step done" data-page-node-id="butP4cHg7ZEbPi6PITeDSn"><div class="dot" data-page-node-id="eahWY1TWTkmN5SLWMpYsDj">5</div><div class="body" data-page-node-id="6nYlYOkNpcq5qvfHkEj5Pr">
+      <b data-page-node-id="85VnkNAPtAnAlpQfBId7A7">结果通过 <code data-page-node-id="0O0i3ACAv7QZUToabFIWTH">window.njuBridge</code> 回传原生</b>
+      <span data-page-node-id="hNKVB8Pg4HYIUsZfmPMj8Y">优先走 <code data-page-node-id="x8lPjbbvBfsSmOtSXJ2uQQ">javaScriptProxy</code> 注册的桥；桥没收到时退回 <code data-page-node-id="8tp8LYF4Fry7T06nqSXv7L">runJavaScript</code> 返回值。
+            两条通道都留，兼容社区脚本</span>
+    </div></div>
+    <div class="step done" data-page-node-id="4mRboXC1DWJxk0rOnjj2tN"><div class="dot" data-page-node-id="QcN5p9V2u6VttesD9Hhi7p">6</div><div class="body" data-page-node-id="Qfv8vRivPg5bzoUIS01CUB">
+      <b data-page-node-id="blg18h2oTJSGi6BPprM91G">归一化并落盘</b>
+      <span data-page-node-id="rcGEGBEv6wKZvmVuCfmbPT">把 nju.app 语义的 <code data-page-node-id="z3d0DHV91MRuj97kDTeqDs">time_count = 末节 − 首节</code> 换算成内部模型的
+            <code data-page-node-id="3MYgWFqnWnmMcbX2JGyWSo">endSlot</code>，排序后存进 preferences</span>
+    </div></div>
+    <div class="step done" data-page-node-id="UaS3Z8bN7dzQFxY3GEoQ5i"><div class="dot" data-page-node-id="d7W5F7THBWKRVXbkf85wcY">7</div><div class="body" data-page-node-id="DSWcCMHe4cIdpsrkONZ5AP">
+      <b data-page-node-id="LHzll0rNuqbkcfExz5HH9b">确认开学第一周的周一</b>
+      <span data-page-node-id="hvizWMtFSy5ru6YKEfCN8J">算不出周次，卡片就没有意义。第一次导入时弹日期选择器，
+            无论选哪天都会自动归到那一周的周一</span>
+    </div></div>
+    <div class="step done" data-page-node-id="VwtlKrIj1tl1oSeUXCmPgX"><div class="dot" data-page-node-id="1AyaTBWMlgytqFsRqABnEg">8</div><div class="body" data-page-node-id="iNVhu4kmXWT4rZgsihUOS6">
+      <b data-page-node-id="TixAB04MdwqVkJNGcR82Dr">刷新卡片 + 重建提醒队列</b>
+      <span data-page-node-id="0GJqJEDf1a1S1a3eLsPifE">推给所有已添加的卡片（桌面 + 锁屏），并按新课表重排未来一周的上课提醒</span>
+    </div></div>
+  </div>
+
+  <h3 data-page-node-id="lR1FnpZ5Yc1JZcOhL0nGvT">页面结构与解析规则</h3>
+  <pre data-page-node-id="GayHrgUxOH4cD224tQCPdR"><span class="c" data-page-node-id="pF5HgWjVNrpFu3jbvkf8KK">// 列顺序与真实页面一致（2026 版 ehall）</span>
+td[1]  课程号          <span class="c" data-page-node-id="2nBgAX0Pk5gHyXVEEOjZ8d">// 25010010</span>
+td[2]  课程名称        <span class="c" data-page-node-id="HVd5nHYToP8fYjDTiTdmmm">// 高等数学（一）</span>
+td[4]  授课教师        <span class="c" data-page-node-id="DquhqkOw1ALXceSvqj8Hv8">// 张三</span>
+td[6]  时间地点        <span class="c" data-page-node-id="yBmZA5HTejqVfyTkqX5YMi">// 周三 2-4节 1-3周,10-13周 仙Ⅱ-304</span>
+td[8]  备注            <span class="c" data-page-node-id="92EBaG18U5lWuhi6jy2C7b">// 必修</span>
+td[10] 考试时间        <span class="c" data-page-node-id="Hhwgdad35b7qqHY2KgNikx">// 2027-01-05 14:00-16:00</span>
+
+<span class="c" data-page-node-id="ZIRp4sXSUPsoeoeHvFlgN5">// td[6] 的三种形态都要处理</span>
+周五 1-2节 1-16周 仙Ⅱ-204              <span class="c" data-page-node-id="nfPd37OBmphZf9O3Iw63mm">→ 连续周</span>
+周二 5-8节 2-18周(双) 仙1-216          <span class="c" data-page-node-id="RZXVUyWQxmHeOsvYR39oRy">→ 双周，取偶数周</span>
+周一 3-4节 1-3周,10-13周 基础实验楼丙405  <span class="c" data-page-node-id="ea50LnaXiFPWu1YXADRLod">→ 间断周，合并成 [1,2,3,10,11,12,13]</span>
+周一 3-4节 1-16周 自由时间             <span class="c" data-page-node-id="AkO5rTJiLAEEN9Y8U0PN6L">→ 无固定教室，单独归类</span>
+
+<span class="c" data-page-node-id="FnAnVH6JZNQK0k5UcFMqZj">// 一门课有多个时间段时，用「,周」切分后各生成一条记录</span></pre>
+
+  <div class="tb-wrap" data-page-node-id="i5sMPDyO7w3LWBOygDnDat">
+    <table data-page-node-id="nArbHZIfsc69Xk5Mmn5tXi">
+      <thead data-page-node-id="JYLDMP6GZSnbgd0tQVS5U2"><tr data-page-node-id="OabPb3kNVm45Tzx73hNZL5"><th data-page-node-id="X1ecDpxsXIgMdnMDR9npm0">已适配入口</th><th data-page-node-id="FkuHCijIYAnf0utFAoNI41">URL</th><th data-page-node-id="Y8wgF61CLnVlZOkeNAUOQD">适用</th></tr></thead>
+      <tbody data-page-node-id="JJZdb1eevZdIIRPfmH5MLD">
+        <tr data-page-node-id="Bt29ls08MLEbwVZtWdIVBP"><td data-page-node-id="ImVWMhEdb2lgZjdoP5Ej54">本科生教务系统</td><td data-page-node-id="alZ5ADvZAuE4nhmfOq2pWn"><code data-page-node-id="q8jIIXklKeRWrqXOIgGjBf">ehallapp.nju.edu.cn/jwapp/sys/wdkb</code></td><td data-page-node-id="adG3AkpvMj7Qtk8p2NUGOa">推荐，本科</td></tr>
+        <tr data-page-node-id="rCuiyam1jTr3L24bFiwIKj"><td data-page-node-id="tATte2KKqNtXyBm8IMyRX6">本科生选课系统</td><td data-page-node-id="lx0ZhJAu5WyV52FMUVM3qS"><code data-page-node-id="k2G3gN4mXHrD0voGFRsnNL">xk.nju.edu.cn/xsxkapp</code></td><td data-page-node-id="bego9R3udTlJeIOtyrm1pC">刚选完课</td></tr>
+        <tr data-page-node-id="FyJT8NhwWaHmyfgW75wNbX"><td data-page-node-id="6YvxjXMKu4Lc5kJwlLIuCj">研究生教务系统</td><td data-page-node-id="BP36RpBjgyI74yWTJvlsqS"><code data-page-node-id="miCrUgPPghTvaD8TPB67Av">ehallapp.nju.edu.cn/gsapp/sys/wdkbapp</code></td><td data-page-node-id="N41Q3qCr1oxbAH8tVgv3CV">研究生</td></tr>
+        <tr data-page-node-id="7Txdkr7RbsLNWn2GNCRPZ9"><td data-page-node-id="iFCQF9ByH3bmUfHTfFCKQA">研究生选课系统</td><td data-page-node-id="C0s4GWrCFXeKLq9IxsZ77w"><code data-page-node-id="novGUVnu0JI4DrRov86eET">yjsxk.nju.edu.cn</code></td><td data-page-node-id="gjeOMOn4ZMUx08HNZuS7Al">研究生</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="muted" data-page-node-id="oyKPfab14nDfwkrFbqQ90a">URL 与 nju.app 的官方配置（<code data-page-node-id="FDYCBaJGAIfM2iFWgueFDa">schoolList.json</code>）逐字对齐。
+     想支持东南、上交等学校，只要往 <code data-page-node-id="tELMao6CVt14EgYl6ke4qJ">SCHOOL_LIST</code> 里加一条 + 放一个抓取脚本，主流程完全不用动。</p>
+</section>
+
+<!-- ============ 03 架构 ============ -->
+<section data-page-node-id="98No1rgTakbAupPzY469Qr">
+  <h2 data-page-node-id="SKqoku0XyrflCF0hHAxQe3"><span class="num" data-page-node-id="hcrnEBGZoTEqLe7DpCDlfK">03</span>架构分层</h2>
+
+  <div class="card" style="padding:26px 24px" data-page-node-id="xu3ReGdm4qGm7ylV8gm6ng">
+    <svg viewBox="0 0 940 560" style="width:100%;height:auto" data-page-node-id="XZTXrWuTJjOXVBHz58OYGt">
+      <defs data-page-node-id="vZDyNWrGrpZm900elw0YpI">
+        <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1" data-page-node-id="oOOUnretZfnJiGsAPtyNXi">
+          <stop offset="0%" stop-color="#3D7EFF" data-page-node-id="m7OGU3aj4Lb3WM2iG1Ce4t"/><stop offset="100%" stop-color="#7A5BFF" data-page-node-id="QxncmCxZRknBxoOYoOdhPd"/>
+        </linearGradient>
+      </defs>
+
+      <!-- 表现层 -->
+      <rect x="16" y="16" width="908" height="140" rx="14" fill="#F7F8FB" stroke="#E7E9EE" data-page-node-id="ran3bY4WKaLLe4AsxHfunT"/>
+      <text x="36" y="44" font-size="13" font-weight="700" fill="#3D7EFF" font-family="system-ui" data-page-node-id="HQbK61vxiMD9BaDUyiIT8V">表现层</text>
+      <rect x="36" y="58" width="200" height="80" rx="10" fill="#fff" stroke="#DCE6FA" data-page-node-id="RO2duNQ3oroGJBHVxaIRFe"/>
+      <text x="136" y="88" font-size="13" font-weight="600" fill="#111318" text-anchor="middle" font-family="system-ui" data-page-node-id="AWPIoamyg87qu7Lr7k1C8d">Index.ets</text>
+      <text x="136" y="108" font-size="10.5" fill="#6B7280" text-anchor="middle" font-family="system-ui" data-page-node-id="CWDZBTSX0FrcMGq5Dt9mKa">下一节课 · 今日 · 本周 · 考试</text>
+      <text x="136" y="124" font-size="10.5" fill="#6B7280" text-anchor="middle" font-family="system-ui" data-page-node-id="PE45jt5WobSBsFFbe8EpWR">前台 30 秒重算倒计时</text>
+
+      <rect x="252" y="58" width="200" height="80" rx="10" fill="#fff" stroke="#DCE6FA" data-page-node-id="AjYZDzn2Gs2nyENxZFTJC9"/>
+      <text x="352" y="88" font-size="13" font-weight="600" fill="#111318" text-anchor="middle" font-family="system-ui" data-page-node-id="zBriILH4FkWSCB8p7hUXLa">ImportPage.ets</text>
+      <text x="352" y="108" font-size="10.5" fill="#6B7280" text-anchor="middle" font-family="system-ui" data-page-node-id="faHOrDXbDCAh0TL8Ff1ZKA">内置浏览器 · 自动抓取</text>
+      <text x="352" y="124" font-size="10.5" fill="#6B7280" text-anchor="middle" font-family="system-ui" data-page-node-id="wU27tYs4lo7461hAM9zhmg">4 次重试 + 手动兜底</text>
+
+      <rect x="468" y="58" width="200" height="80" rx="10" fill="#fff" stroke="#DCE6FA" data-page-node-id="GU8EB4Gi802aUF2GgvQ40I"/>
+      <text x="568" y="88" font-size="13" font-weight="600" fill="#111318" text-anchor="middle" font-family="system-ui" data-page-node-id="xCO8g2YWYHoSnPI1vogULx">SettingsPage.ets</text>
+      <text x="568" y="108" font-size="10.5" fill="#6B7280" text-anchor="middle" font-family="system-ui" data-page-node-id="9yGYXmC5fkP8MOlTIVEFgM">学期 · 提醒 · 后台 · 卡片 · 数据</text>
+      <text x="568" y="124" font-size="10.5" fill="#6B7280" text-anchor="middle" font-family="system-ui" data-page-node-id="dOBb5PWad2r5CMAa0HbhDG">备份导出 / 恢复 / .ics</text>
+
+      <rect x="684" y="58" width="220" height="80" rx="10" fill="#fff" stroke="#DCE6FA" data-page-node-id="80dIUTqJywvv3KhEbXMkMb"/>
+      <text x="794" y="88" font-size="13" font-weight="600" fill="#111318" text-anchor="middle" font-family="system-ui" data-page-node-id="ffUNqrd895G2mDDvo2xCha">WeekGrid.ets</text>
+      <text x="794" y="108" font-size="10.5" fill="#6B7280" text-anchor="middle" font-family="system-ui" data-page-node-id="UvLjAYMHwsJg3b0JjNTMav">绝对定位网格</text>
+      <text x="794" y="124" font-size="10.5" fill="#6B7280" text-anchor="middle" font-family="system-ui" data-page-node-id="z5FJHugkKiKKpkM7dTkGrx">冲突并排 + 「冲」角标</text>
+
+      <!-- 服务层 -->
+      <rect x="16" y="172" width="908" height="196" rx="14" fill="#F7F8FB" stroke="#E7E9EE" data-page-node-id="S2R6kV0uXEoSrQ17bVof4A"/>
+      <text x="36" y="200" font-size="13" font-weight="700" fill="#7A5BFF" font-family="system-ui" data-page-node-id="VuPTp821H8aFzf7NnpowT2">服务层</text>
+
+      <rect x="36" y="214" width="270" height="138" rx="10" fill="#fff" stroke="#C9A9FF" stroke-width="1.5" data-page-node-id="2hAfxZbRmgXwM8rWhKkSqd"/>
+      <text x="171" y="240" font-size="13" font-weight="700" fill="#7A5BFF" text-anchor="middle" font-family="system-ui" data-page-node-id="IaB3KfR4RfFXjXY2ZAOYQA">NextClassEngine.ets</text>
+      <text x="171" y="260" font-size="10.5" fill="#6B7280" text-anchor="middle" font-family="system-ui" data-page-node-id="SuwmiNYBdL9F3ugjzbPkRL">★ 算「下一节课」的核心</text>
+      <text x="171" y="282" font-size="10.5" fill="#3C4049" text-anchor="middle" font-family="system-ui" data-page-node-id="kc4NjokcvuScgiCCtEv4aa">resolve() · daySchedule()</text>
+      <text x="171" y="300" font-size="10.5" fill="#3C4049" text-anchor="middle" font-family="system-ui" data-page-node-id="MRnnDadBZ97CTl3ktfegHC">buildWeekBlocks() · upcomingExams()</text>
+      <text x="171" y="322" font-size="10.5" fill="#6B7280" text-anchor="middle" font-family="system-ui" data-page-node-id="4NI9oMlqzkpLsEHovaZA1C">纯函数 · 无副作用 · 可离线单测</text>
+      <text x="171" y="340" font-size="10.5" fill="#6B7280" text-anchor="middle" font-family="system-ui" data-page-node-id="LMaT01tGUf8THdcZD7B36u">63 项测试覆盖边界情况</text>
+
+      <rect x="318" y="214" width="180" height="64" rx="10" fill="#fff" stroke="#E7E9EE" data-page-node-id="ncJlUiLQZbPtmjo0x7mowb"/>
+      <text x="408" y="240" font-size="12.5" font-weight="600" fill="#111318" text-anchor="middle" font-family="system-ui" data-page-node-id="GVx7QIHhHZj7jB1B9qSiOp">Extractor.ets</text>
+      <text x="408" y="260" font-size="10" fill="#6B7280" text-anchor="middle" font-family="system-ui" data-page-node-id="AmvlfwQBFBBM2DAO946jNl">注入 + bridge 回传 + 解析</text>
+
+      <rect x="318" y="288" width="180" height="64" rx="10" fill="#fff" stroke="#E7E9EE" data-page-node-id="jYQfCLCqiPn1kSytgJHniw"/>
+      <text x="408" y="314" font-size="12.5" font-weight="600" fill="#111318" text-anchor="middle" font-family="system-ui" data-page-node-id="vJ7IxDgaTKAwWO1Fcstpld">CourseStore.ets</text>
+      <text x="408" y="334" font-size="10" fill="#6B7280" text-anchor="middle" font-family="system-ui" data-page-node-id="1RbD8VDpGFtE3OT9vtMy6u">preferences 持久化 + 备份</text>
+
+      <rect x="510" y="214" width="180" height="64" rx="10" fill="#fff" stroke="#E7E9EE" data-page-node-id="A9056MbZfR1PUWjcTe0lBN"/>
+      <text x="600" y="240" font-size="12.5" font-weight="600" fill="#111318" text-anchor="middle" font-family="system-ui" data-page-node-id="pN1oAHq9BqJuQCyL9W9tDe">WidgetService.ets</text>
+      <text x="600" y="260" font-size="10" fill="#6B7280" text-anchor="middle" font-family="system-ui" data-page-node-id="wrWODJizsGy5R8WJNaWXyy">卡片数据（同步版 buildSync）</text>
+
+      <rect x="510" y="288" width="180" height="64" rx="10" fill="#fff" stroke="#E7E9EE" data-page-node-id="PBqsuBjMP30E4k8z4TatLl"/>
+      <text x="600" y="314" font-size="12.5" font-weight="600" fill="#111318" text-anchor="middle" font-family="system-ui" data-page-node-id="EPM1FKXFSzggbIQklQX7t7">ReminderService.ets</text>
+      <text x="600" y="334" font-size="10" fill="#6B7280" text-anchor="middle" font-family="system-ui" data-page-node-id="9EC6b6C6gff1gc5qbJrJtN">提醒队列整体重建</text>
+
+      <rect x="702" y="214" width="202" height="64" rx="10" fill="#fff" stroke="#E7E9EE" data-page-node-id="2NcsxWBGyhwEOdNiwK57q3"/>
+      <text x="803" y="240" font-size="12.5" font-weight="600" fill="#111318" text-anchor="middle" font-family="system-ui" data-page-node-id="SSf0ODDwC9J1Aqi2DjG9Uo">WorkSchedulerHelper</text>
+      <text x="803" y="260" font-size="10" fill="#6B7280" text-anchor="middle" font-family="system-ui" data-page-node-id="HokxiAXOBV0wNL8vP4UbeI">后台任务注册 · isPersisted</text>
+
+      <rect x="702" y="288" width="202" height="64" rx="10" fill="#fff" stroke="#E7E9EE" data-page-node-id="vRZbZ9My3QuJaNjJdlVvwW"/>
+      <text x="803" y="314" font-size="12.5" font-weight="600" fill="#111318" text-anchor="middle" font-family="system-ui" data-page-node-id="ZlfDCUs1ykqi1K0sACARdC">AppBootstrap.ets</text>
+      <text x="803" y="334" font-size="10" fill="#6B7280" text-anchor="middle" font-family="system-ui" data-page-node-id="HLqt53ATGxE2bmNPSvmbcQ">三条入口共用初始化与收口</text>
+
+      <!-- 系统能力 -->
+      <rect x="16" y="388" width="908" height="100" rx="14" fill="url(#g1)" opacity="0.10" data-page-node-id="VXBflYUtVxFvtlIhhwlITZ"/>
+      <text x="36" y="418" font-size="13" font-weight="700" fill="#3D7EFF" font-family="system-ui" data-page-node-id="QPgV8NskbGLeEzG8keHeGV">HarmonyOS 系统能力</text>
+      <text x="36" y="446" font-size="11.5" fill="#3C4049" font-family="system-ui" data-page-node-id="ffWcxapXxWuNHdUmytquDO">FormKit 卡片　·　BackgroundTasksKit 提醒代理 + 后台任务　·　ArkWeb 内置浏览器</text>
+      <text x="36" y="470" font-size="11.5" fill="#3C4049" font-family="system-ui" data-page-node-id="nAWwC4mOlON0drL3uSU6KJ">ArkData preferences　·　CoreFileKit 文件选择与保存　·　ArkTS 编解码</text>
+
+      <!-- 卡片侧 -->
+      <rect x="16" y="504" width="908" height="44" rx="12" fill="#fff" stroke="#E7E9EE" data-page-node-id="AKrFVhz1oVCN43yOHJKp8g"/>
+      <text x="36" y="532" font-size="11.5" fill="#3C4049" font-family="system-ui" data-page-node-id="QdfGYGW3X9VFlTtaaVox69">
+        卡片侧：NextClassFormAbility　·　TodayFormAbility　·　LockScreenFormAbility　·　RefreshWorkAbility（后台）　·　BootSubscriber（备用）
+      </text>
+    </svg>
+  </div>
+</section>
+
+<!-- ============ 04 卡片刷新 ============ -->
+<section data-page-node-id="KC6j66soKNHuT9lJuOU2Mv">
+  <h2 data-page-node-id="MQe0wW01VqPYd7LBiohSqy"><span class="num" data-page-node-id="BtCvZ1gucPUigV9bHZLdO6">04</span>卡片是怎么"活"起来的</h2>
+
+  <p data-page-node-id="i0p2qh6C2lujpBXJ85yrWN">卡片不会自己跳秒。倒计时文字会变旧，状态需要在正确时刻翻转
+     （"还有 20 分钟" → "正在上课"）。无脑每 5 分钟刷一次既耗电，
+     还会撞上系统每天 50 次的定时刷新配额。</p>
+
+  <div class="tb-wrap" data-page-node-id="I9Rt5uQ8IsFi70vhNTQyLB">
+    <table data-page-node-id="nBj0zv9D8d6ECB15d1rtIE">
+      <thead data-page-node-id="wXRc2N4oRYjypBsMSFapcj"><tr data-page-node-id="IUneRNEONkE9Q2rOKceZyj"><th data-page-node-id="1966Whpnt3CbWVFEiHxLc4">层次</th><th data-page-node-id="dyUQyhYPO1lJWFMdGTaM7T">机制</th><th data-page-node-id="8kJIcF22cVtagMgKsYElar">作用</th></tr></thead>
+      <tbody data-page-node-id="6oQlS6uuwsopEFauyyia7A">
+        <tr data-page-node-id="frFFh52kBMIkmdKzLPWHAw">
+          <td data-page-node-id="P7c5EbjHvjWudV5nAbI35F"><strong data-page-node-id="4dEnBrRCHLvEy7xP7CL46J">基线</strong></td>
+          <td data-page-node-id="iJaR18f6RoiNzWmQiKmQdT"><code data-page-node-id="bdiF4tCDhsWjwatax6kDi4">updateEnabled + updateDuration: 1</code></td>
+          <td data-page-node-id="1L4B7uYfrkKfvWBtFIthEd">系统每 30 分钟回调一次 <code data-page-node-id="QrFA3cltU5ZxtNqdNHiSJd">onUpdateForm</code>，保证长期不打开也不会僵死</td>
+        </tr>
+        <tr data-page-node-id="cBcYXKFZK7DgZ9DFP7yrnU">
+          <td data-page-node-id="RZhocVtiF1dJzjBytZxipB"><strong data-page-node-id="3E5kHjZ9Kwj44NgoTDGPgX">精修</strong></td>
+          <td data-page-node-id="pb4dZEaEGJTqdo2lofQRTI"><code data-page-node-id="0pWlASycB0Ft6vbRBMW6v7">formProvider.setFormNextRefreshTime()</code></td>
+          <td data-page-node-id="jayIQjasz4poJXHXLcSq8y">每次刷新后，算准"状态即将变化"的那一刻再预约下一次：
+              正在上课 → 下课时刷；即将上课 → 上课时刻刷（最短 5 分钟）</td>
+        </tr>
+        <tr data-page-node-id="eRXuVmeH23Ca9VltUe12a3">
+          <td data-page-node-id="q4FWEc5GQF6KK13pMkY9ae"><strong data-page-node-id="UdjTSNKILNuX0FBTOzQggr">事件</strong></td>
+          <td data-page-node-id="2pIZpkf8uMr5vrEV5yWjsW"><code data-page-node-id="nEo7TY7YIZazDCCKJZwixl">onChangeFormVisibility</code></td>
+          <td data-page-node-id="GxX7LCAmlM3l17GboKVMxf">卡片从不可见变可见时立刻刷一次，用户划过来看到的就是新的</td>
+        </tr>
+        <tr data-page-node-id="LTpULr9R1ddrTSGuUdCOll">
+          <td data-page-node-id="ewR8CBPGSMORJgktwRowo6"><strong data-page-node-id="vGVpmD11yMCwgA7VUAL8GI">兜底</strong></td>
+          <td data-page-node-id="ZCAxg29lJR6WHuBWEBS5s5"><code data-page-node-id="fRHWIX4VJiSoWzJYLIIxB6">WorkSchedulerExtensionAbility</code></td>
+          <td data-page-node-id="BEYRKc2frmWPvhKa50w670">每 2 小时后台醒来，重算周次、刷新卡片、重排提醒。
+              <code data-page-node-id="3qkZ8QgBeXoTuzie0be84l">isPersisted: true</code> → 重启后系统自动恢复</td>
+        </tr>
+        <tr data-page-node-id="QJAMDJOZnuQt3t70684LAF">
+          <td data-page-node-id="WN4V8ojcHUBqkmnVucpFy9"><strong data-page-node-id="vq8w9tiiG73eGcJWiECoiy">前台</strong></td>
+          <td data-page-node-id="22ACat8U5EqDzXRoGnrdQB">30 秒 <code data-page-node-id="IkJAkpuCF3HSCV4msHrQtM">setInterval</code></td>
+          <td data-page-node-id="OMXOUOj4zvrapx2LpFBo6y">页面上打开时倒计时保持新鲜（纯计算，不碰 IO）</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="note good" data-page-node-id="wqr2RqiQU7xG2UB5Hj6Xex">
+    <b data-page-node-id="4q3GPmYq6nYpYhr9nsGUST">一个必须知道的坑：onAddForm 是同步的</b>
+    <p data-page-node-id="T3xkIsGtSZzwH2XSyrGduO"><code data-page-node-id="dsaBMXvRxbWJsAsCqgFf8C">FormExtensionAbility.onAddForm</code> 必须<strong data-page-node-id="3YB2MAIdnxfGDd1FFMOPEq">立刻</strong>返回数据，不能 await。
+       所以 <code data-page-node-id="iJVlack8K5vALI6oED07Ps">WidgetService</code> 特意准备了一个同步版本 <code data-page-node-id="B0dU9JoHgGBdcM7FsU6GkH">buildSync()</code>，
+       用 <code data-page-node-id="69VPixlol5OO9co8r5fWFa">preferences.getPreferencesSync</code> / <code data-page-node-id="fJN0AMjeqxr5vFRcV4jykX">getSync</code> 把课表读出来现算。
+       这一条如果搞错，表现是"卡片一直是空的、但也不报错"，非常难查。</p>
+  </div>
+
+  <div class="note" data-page-node-id="EzreiNg4g2bwjISzlHcU93">
+    <b data-page-node-id="IuN64UhY6LlYBhTHCSGOIZ">另一个坑：ArkTS 卡片的数组绑定会静默失败</b>
+    <p data-page-node-id="n58X4FPzhF1XRek1DCFH0R"><code data-page-node-id="UXmm2zcYsf0JyEHshKmvey">Record&lt;string, Object&gt;</code> 里混装数组的类型推断很挑，类型对不上时卡片
+       <strong data-page-node-id="EjLwpB41Fj4DEHiVw1SSfX">不报错、只显示空白</strong>。「今日课表」卡片因此改用 6 个扁平字符串槽位
+       （<code data-page-node-id="kpHqtuKWl4Ndh5lJGx4lLB">s0Time</code> / <code data-page-node-id="x5LuMWHWvrJJV0xBR4LuSr">s0Name</code> / <code data-page-node-id="fTpB0o7dtyzqLlXY9IZ0qC">s0Loc</code> / <code data-page-node-id="9G55iuQW0Z3wYxjfnWCQEj">s0State</code> …），
+       一天最多 6 节封顶完全够用。用一点啰嗦换确定性，值得。</p>
+  </div>
+</section>
+
+<!-- ============ 05 开机自启 ============ -->
+<section data-page-node-id="3MnE3OQgArgHRb3XfqDpsY">
+  <h2 data-page-node-id="oqtRtBaf2gkAsGLK2ZjLSc"><span class="num" data-page-node-id="9o4cQsltx4KeRDmY8fMshI">05</span>关于「开机自启」——这件必须说清楚的事</h2>
+
+  <div class="note bad" data-page-node-id="akRo9XlDEgq9iGfGY0t8wd">
+    <b data-page-node-id="HyUOiBf0i1q71sZ3tse3gU">⚠️ HarmonyOS NEXT 上，三方普通应用无法监听开机广播自启</b>
+    <p data-page-node-id="uWwv9rLNV1A7Gx26ZgNvDX"><code data-page-node-id="mJGoGf4Q0LHAQJiXpc3xyE">StaticSubscriberExtensionAbility</code> 的静态订阅能力主要面向系统应用和企业 MDM 托管应用。
+       我照样把 <code data-page-node-id="XhlFcE01L64b0vmx6NBJWK">BootSubscriber.ets</code> 写好了、<code data-page-node-id="LHzJJHXuaF3rZZWw5kGSTf">module.json5</code> 也配好了——
+       但在普通设备上它<strong data-page-node-id="VyPi0ZzKoWuPM8dLLbo5c8">不会被调用</strong>，别指望它。</p>
+  </div>
+
+  <p data-page-node-id="L4r0Xbn6spCsAdPU5YtU8j">好消息是：真正让"开机后课表照常工作"并不需要开机自启。
+     下面三条已经覆盖了全部实际需求，而且它们都是平台<strong data-page-node-id="w7FuLEFetYlUTIF4L2yoVS">原生支持</strong>的能力。</p>
+
+  <div class="grid3" data-page-node-id="FEkGDx7CFwb9fBZ595BeV7">
+    <div class="card tint" data-page-node-id="ztZYdoi7MCE5DBEPzzBCSm">
+      <h4 style="margin-top:0" data-page-node-id="w41FERhaDi84ABSAHbzjwR">① 卡片由系统恢复渲染</h4>
+      <p style="font-size:13.2px" data-page-node-id="TCHrE0tvguFNTV6XPAB39j">重启后桌面重建，卡片提供方被系统拉起。
+         数据本来就在本机 preferences 里，卡片一渲染就是对的。
+         这是事实上的"开机自启"。</p>
+    </div>
+    <div class="card tint" data-page-node-id="Y6ojD4iuTrvHDss5XBJ5gm">
+      <h4 style="margin-top:0" data-page-node-id="eCAPXuUnWkKl3PNJLevs8v">② 后台任务持久化恢复</h4>
+      <p style="font-size:13.2px" data-page-node-id="6mK6bAyTgwS4Iw1papAiY5"><code data-page-node-id="DCnN8V2SQBCwKF9AAjFVDr">WorkScheduler</code> 注册时带
+         <code data-page-node-id="DhHUifkSv8etZ855BJPWKx">isPersisted: true</code>，任务写进系统，重启后自动恢复，
+         到点拉起 <code data-page-node-id="EtHZIb5JvFbgHGlKCL1VLG">RefreshWorkAbility</code> 干活。</p>
+    </div>
+    <div class="card tint" data-page-node-id="I378yYrQWOaWflbxumCgTa">
+      <h4 style="margin-top:0" data-page-node-id="IQwePGMgOGHezciGPhxFwd">③ 提醒不依赖应用存活</h4>
+      <p style="font-size:13.2px" data-page-node-id="ETlzbXZYNGpSCm2b2xFjo0"><code data-page-node-id="orm5CxWbV0sCUYegU9HKEg">reminderAgentManager</code> 登记的是系统级提醒，
+         重启后照样准时弹。这是课表类 App 唯一真正"救命"的功能。</p>
+    </div>
+  </div>
+
+  <p class="muted" data-page-node-id="s9ixu9u0WGw5h37MFQA8LU">如果还想更激进，可以在 <strong data-page-node-id="68BnOUGTLtttljh59VU0Yh">设置 → 应用启动管理 → 南哪儿课表</strong> 里
+     手动打开「允许自启动 / 允许关联启动 / 允许后台活动」。这条引导文案已经写在设置页里。</p>
+</section>
+
+<!-- ============ 06 功能 ============ -->
+<section data-page-node-id="tGGe45nMOUP3dQ8PuSvYQ9">
+  <h2 data-page-node-id="OqRwaKbCXMExlI4JriH12N"><span class="num" data-page-node-id="BCuBnRwxy8ba8s97oO7JyW">06</span>功能清单</h2>
+
+  <h3 data-page-node-id="1E4tmTSNgDPv1gdJMlhjB2">你要求的</h3>
+  <div class="tb-wrap" data-page-node-id="BqkleuEPsUhdmgRYrdq83X">
+    <table data-page-node-id="Z5l78xzYItgAkdiJbkR597">
+      <thead data-page-node-id="IOO7wa3j9Mqh9feERVVHuG"><tr data-page-node-id="EDUVMDisYk7mEWTVV7fVQr"><th data-page-node-id="pX3hcmqorzUWvpMcgUicPf">需求</th><th data-page-node-id="Vao46vS7vf36xtWSVRuyHs">实现</th><th data-page-node-id="1f5XeJJcUx6lzGK4Adf6EO">状态</th></tr></thead>
+      <tbody data-page-node-id="MhVZ89wTKvv0TkRa121zko">
+        <tr data-page-node-id="BLtDYIJ4RhqkREPptvY6Ao"><td data-page-node-id="88AKGrcgYP62Z6KvQ0pFR6">内置浏览器打开南大课表并读取</td>
+            <td data-page-node-id="gUzVfqHDFTqR4LahzwyGNN">Web 组件 + 注入脚本，登录后自动抓取，4 次重试 + 手动兜底</td>
+            <td data-page-node-id="3MDBHDLzvTXB0BqpH9vHy1"><span class="pill ok" data-page-node-id="mJUrY9zHTMofF4kvYLifYr">完成</span></td></tr>
+        <tr data-page-node-id="IQFstWcbFzEaVmGUcdtu9q"><td data-page-node-id="bFRLMHwV55myPoSx1H0qUm">桌面小工具显示下一节课</td>
+            <td data-page-node-id="7LqaqgVkndkxzsFs4KP1MO">2×2 / 2×4 卡片：课程名 · 第几节 · 起止时间 · 地点 · 教师 · 倒计时</td>
+            <td data-page-node-id="EmfpSLDmct9Olsg9TCXBxd"><span class="pill ok" data-page-node-id="6GNLVhJVMqLO4E4ku2gYte">完成</span></td></tr>
+        <tr data-page-node-id="DsQWWAzIsTcm9T8kfiKhrz"><td data-page-node-id="6pW6AxIJri6FruxO9xNGQ8">锁屏小工具</td>
+            <td data-page-node-id="EwYc1CHdvAIkgEuwHqNoY8">1×2 / 1×1 卡片，<code data-page-node-id="JNOTE72iUqGRGzGM1UurT1">renderingMode: autoColor</code></td>
+            <td data-page-node-id="8DgLazRZHL9W0EK1bn6kkW"><span class="pill ok" data-page-node-id="ngeyHAVvtMBuRB8V4u1ZnQ">完成</span></td></tr>
+        <tr data-page-node-id="Gjn2hpOVEaQSe60Ztj8FEW"><td data-page-node-id="6IHPSwtwQa4BPKT7oxeLt6">开机自启</td>
+            <td data-page-node-id="0UUSqOGGEqcxMH1BBY1Qde">平台限制无法实现，改用三条真实可行的替代路径（见上一节）</td>
+            <td data-page-node-id="AVkrLP6nuWY6f8H2HQWspy"><span class="pill warn" data-page-node-id="G855cJIqjLI5MiJyS62zWy">受限</span></td></tr>
+        <tr data-page-node-id="BM20NRe1KDjCGWNV76U0eW"><td data-page-node-id="inLl7NnrP2CNtoGrSmkcXH">自动刷新</td>
+            <td data-page-node-id="vTMK0NJtFSGb9MDzVtxX1v">五层机制：基线 + 精修 + 事件 + 后台兜底 + 前台</td>
+            <td data-page-node-id="fzsAk8ytdsjpFBEhX5ZFnV"><span class="pill ok" data-page-node-id="jOW2N27UU8pHLAH6EPWDU6">完成</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 data-page-node-id="iWTjohcCA9kLdLnqj1DFHf">我额外加的（按实用度排序）</h3>
+  <div class="tb-wrap" data-page-node-id="C0KGDo8y2AfWJF80iebG4d">
+    <table data-page-node-id="ZMzax9UH3FAFhlLYQLZWzQ">
+      <thead data-page-node-id="ZengWsU7coQapAKcGlNuZc"><tr data-page-node-id="GpVaSsaoCCDqfSHdotSfhp"><th data-page-node-id="hYQ6ivkW4WEvD7tA2uSSPr">功能</th><th data-page-node-id="7Gw1Io8JuGRG4A4yORNBBZ">为什么加</th></tr></thead>
+      <tbody data-page-node-id="G4rCHWRdUv1tj2DO67jmEH">
+        <tr data-page-node-id="hU1xYk2t4VK9SdA4HwSyNp"><td data-page-node-id="uMPwts0sTo96yiGawV0UCS"><strong data-page-node-id="Hzxqhkxqr25cNrv9AEkPud">上课提醒</strong><br data-page-node-id="8jvgC99E5GSloBJtJSQGQy"><span class="muted" data-page-node-id="GKWtApLWWTwxTsbosuL5jK">5/10/15/20/30 分钟可调</span></td>
+            <td data-page-node-id="aMDlbxGypRBFcEiMPprahD">用系统提醒代理，应用被杀也会准时弹。课表类 App 唯一真正"救命"的功能。</td></tr>
+        <tr data-page-node-id="NJjoAfcyjgD84WDzlwuxpd"><td data-page-node-id="pn43ki0DT65NuiC0wb2ono"><strong data-page-node-id="w1JYKDRg3nj4MYHHtBvUDV">考试倒计时</strong></td>
+            <td data-page-node-id="dBWDumP9GNlA0bA35qMgWD">教务系统那张表第 11 列本来就带考试时间，nju.app 抓了但没怎么用。
+                白捡的信息，直接做成倒计时列表 + 考前一天 20:00 提醒。</td></tr>
+        <tr data-page-node-id="xzneXk7Bs4USBsicW5lcdi"><td data-page-node-id="T1Nk05Aj7UYAONFsYfD1J6"><strong data-page-node-id="13oLEXBmFmxbf1XxRzfnjq">同时段多门课并排</strong></td>
+            <td data-page-node-id="JJCH3t8DHlrUQjReRN59dS">南大「免修不免考」很常见，同一时段两门课不能只显示一门。
+                周课表里同格并排 + 打「冲」角标，卡片上也会提示"同时段还有 N 门"。</td></tr>
+        <tr data-page-node-id="JJYrVHZaEYzxDnKspLOFao"><td data-page-node-id="DuCARcmGanhE60L7OPrsAk"><strong data-page-node-id="hiCVNk4W8knG6WLTyj7QT4">导出 .ics 到系统日历</strong></td>
+            <td data-page-node-id="vZMa0ZYeMWHXEHkZqUasFk">课表 App 只能解决"看"。导进日历之后手表震动、平板、电脑全都能收到。
+                投入产出比最高、又几乎没人做的功能。</td></tr>
+        <tr data-page-node-id="zN2e6u4KwKHuTMrbeu0WXL"><td data-page-node-id="FoPgf7ngKtLT6m4qqjdm1l"><strong data-page-node-id="0E7impbkY6ycjQ1agCEkI7">自由时间课程单独归类</strong></td>
+            <td data-page-node-id="lNc8J1wfcCMSwnvxNIQIYB">「自由时间」的课没有固定时间地点，塞进网格会把整张表搞乱。</td></tr>
+        <tr data-page-node-id="ggk7rQKQi6j7vyjgcpwPJC"><td data-page-node-id="dsQPIedYMionFXLOAkRRWI"><strong data-page-node-id="bjIZDJpVfBQQa0xdEYoh0G">周次压缩显示</strong></td>
+            <td data-page-node-id="9ymtS3UIkrAFye0EExhh4r"><code data-page-node-id="7wa6yGsvIfCuy9su0JDx05">[1,2,3,10,11,12,13]</code> → 「1-3, 10-13 周」，课程详情里一眼看懂。</td></tr>
+        <tr data-page-node-id="l1ELsTncaj8aiaCUOvlYJs"><td data-page-node-id="aV0sZp0T20L42Q8uZNtIP7"><strong data-page-node-id="2ym2GWaxDDikRmRKbPNZ4A">作息时间可校准</strong></td>
+            <td data-page-node-id="0xTy4X0kD6OeHG3GDbfWwj">各校区/夏令时不同，作息表做成可改的。发现问题一键恢复默认再核对。</td></tr>
+        <tr data-page-node-id="61Dz6983TBT7sebuUans1m"><td data-page-node-id="co1iulGcPiilXfOVoXe0ii"><strong data-page-node-id="zA2G7u3pFVvM3tU7Y49IkZ">备份导出 / 恢复</strong></td>
+            <td data-page-node-id="xuS7nj8KzweEwEtLkfHEt0">换手机、换学期不用重新登录一遍教务系统。</td></tr>
+        <tr data-page-node-id="Y9EdynIXmBXbsgQVATT4pa"><td data-page-node-id="u4wV7UlbNWWLwjcSp3AHGz"><strong data-page-node-id="PsOWDdqXm9ngzEF7E629gw">今日卡片自动顶上明天</strong></td>
+            <td data-page-node-id="7EjXvCLwZl8j5XwrKWXhlJ">今天没课时不显示"今天没有课"这种废话，直接把明天的课顶上来。</td></tr>
+        <tr><td><strong>作息校准页</strong><br><span class="muted">整体平移 + 逐节微调</span></td>
+            <td>课表里存的是"第几节"，卡片上的"几点几分"全靠作息表换算出来。
+                作息一旦不对，所有课的时间整体偏移，但界面本身看不出哪里错了——这是最难自查的一类问题。
+                所以给了两条路：所有课都偏同一个量就用「整体平移」一键修；只有某一节不对再单独点它。</td></tr>
+        <tr><td><strong>卡片上的按钮</strong><br><span class="muted">今天/明天 · 刷新</span></td>
+            <td>今日课表卡片右上角点一下切到明天，下一节课卡片上点「刷新」。
+                走 <code>postCardAction</code> + <code>onFormEvent</code>，不打开 App 就能操作。</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 data-page-node-id="0qaRHCbdAOMb457Png387r">顺手做掉的</h3>
+  <ul data-page-node-id="cQaxScMGsBT713UXXD8rQc">
+    <li data-page-node-id="VC2bjKuwOXqRAGZHaA58SW">周课表按课程号<strong data-page-node-id="5GIpAyiDqSFRxg4OoLaHIS">稳定哈希配色</strong>，同一门课每次打开颜色一样</li>
+    <li data-page-node-id="vgDbhvyHSw64IgyLNXNgsS">未开学 / 假期 / 学期末都有明确状态，不会显示空白或 <code data-page-node-id="AHLz3dLGaqLMR1P8z4GI0U">NaN</code></li>
+    <li data-page-node-id="lmPFQ2OOnZOBrgQ9v9niz6">卡片不设背景色、文字用 <code data-page-node-id="JZiskahFVwcQshBypnX1hf">sys.color.*</code> 系统色，深浅色模式自动适配</li>
+    <li data-page-node-id="jM06qq3D2cTotnOJLazgEs">卡片点击可带参数直达指定页面，长按快捷入口已预留</li>
+  </ul>
+</section>
+
+<!-- ============ 07 测试 ============ -->
+<section data-page-node-id="WMgTJAdmBSm1O3722SqKWU">
+  <h2 data-page-node-id="GH5PRezEEntgXz3s57AgcB"><span class="num" data-page-node-id="4tM7urBecenkCtMYHs2BTg">07</span>验证</h2>
+
+  <p data-page-node-id="B3CHjuvqtJTBABR6dzi2fe">这套工程的测试思路是：<strong data-page-node-id="rf76TAuM63jM12ACLwj8Od">把"改版风险最高"和"边界最多"的两块逻辑从 UI 里剥出来，单独测。</strong>
+     不用开模拟器、不用连真机、不用登录教务系统，在电脑上秒级回归。</p>
+
+  <div class="grid3" data-page-node-id="96v3YR5zX5U4b906juiJeM">
+    <div class="stat"><b>28</b><span>本科教务抓取 · 全通过</span></div>
+    <div class="stat"><b>66</b><span>另外三个入口抓取 · 全通过</span></div>
+    <div class="stat"><b>63</b><span>下一节课计算引擎 · 全通过</span></div>
+    <div class="stat"><b>157</b><span>断言总数 · 0 失败</span></div>
+  </div>
+
+  <h3 data-page-node-id="WJ5YDYMJwfRkxCGrGBdprT">为什么值得这么做</h3>
+  <p data-page-node-id="t0DpSTc2ukD9VGIiIylEWt">教务系统改版时，最先坏的就是 DOM 选择器和正则；而"下一节课"的边界多到在真机上根本守不完——
+     你得等到某一节课正好开始，才能验证一次状态翻转。造个假 DOM、固定住系统时间，
+     这两个问题就都变成了秒级回归。</p>
+
+  <h3 data-page-node-id="eMCazOmReqLWEqtH4on14C">覆盖了什么</h3>
+  <div class="grid2" data-page-node-id="2SKReImo91XCD8PdzHfe8W">
+    <div class="card" data-page-node-id="NadZEY0SW7Co3f37nBhRJy">
+      <h4 style="margin-top:0" data-page-node-id="LRESkiHVOuhpzcUY4XKbAu">抓取脚本 <code data-page-node-id="wlyGIVUAvjrRXtVAJualHn">tools/test_extractor.js</code></h4>
+      <ul style="font-size:13.4px;margin-left:18px" data-page-node-id="yDqzSpQAhhGE3lDiaOw2MW">
+        <li data-page-node-id="S9RaFPbJh0Fk8tGPJSOg4Z">连续周 / 单周 / 双周 / 间断周（<code data-page-node-id="DwtpEvjrQ0AxNDj1rSRLjV">1-3周,10-13周</code>）</li>
+        <li data-page-node-id="E1nhXetXnlkDva42koyrQ2">一门课拆成多个时间段</li>
+        <li data-page-node-id="HFT0Xl8P5IxTsIY96XOj0T">自由时间课程归类</li>
+        <li data-page-node-id="uFi5a4ZbY7dHDlDVJVVGiK">表头行、空行自动跳过</li>
+        <li data-page-node-id="wlCAUOVwXsNYyGEFGfEBip">找不到表格 / 空表 / 学期名节点缺失的兜底</li>
+        <li data-page-node-id="SMps39stGBupXaRZUISMso">bridge 回传通道</li>
+      </ul>
+    </div>
+    <div class="card" data-page-node-id="EiEtjqS6Dr2SIKGKz35vr3">
+      <h4 style="margin-top:0" data-page-node-id="PylWaIKTG1CSZqFfMz5W7G">计算引擎 <code data-page-node-id="9q8qfGvPOVQFRn6V4H6XbO">tools/engine_test.ts</code></h4>
+      <ul style="font-size:13.4px;margin-left:18px" data-page-node-id="tj2QxbVXsv8sPRcyflPw2j">
+        <li data-page-node-id="gmimCzrDDcC5jsK1BCtnAg">周次计算（开学前后 / 跨周 / 未设置）</li>
+        <li data-page-node-id="8rJl4AxIzGrgqCchnFWF2o">课前 · 课中 · 课间 · 跨天 · 周末 · 未开学</li>
+        <li data-page-node-id="PwJhDq4iMysnJijIkTapfm">同时段多门课（免修不免考）识别</li>
+        <li data-page-node-id="fh8jh1ifM1y6N000KNBteh">单双周课程在正确周次出现/消失</li>
+        <li data-page-node-id="LMR40PUfSFnNQHYihcmsg6">冲突标记、跨节 span 计算</li>
+        <li data-page-node-id="yw6drAlnRWLjkNF9E3GvAN">考试时间解析与历史考试过滤</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4 style="margin-top:0">另外三个入口 <code>tools/test_extractors_extra.js</code></h4>
+      <ul style="font-size:13.4px;margin-left:18px">
+        <li>选课系统：表头列顺序被打乱后仍能动态识别</li>
+        <li>选课系统：「时间地点」格是纯文本、没有子 div 时也能解析</li>
+        <li>研究生教务：stub 掉 XHR，验证接口调用与学期选取</li>
+        <li>研究生选课：页面本身是 JSON 的场景</li>
+        <li>三个脚本共同的 bridge 回传通道</li>
+        <li>PKSJDD 为 null（自由时间课程）不被丢弃</li>
+      </ul>
+    </div>
+  </div>
+
+  <pre data-page-node-id="LNLtqs5jTAkXjFxdA8Wxmk"><span class="c" data-page-node-id="oYuO9rPn8MfnCofUc0tqWv">$ bash tools/run_tests.sh</span>
+
+=============== [1/3] 本科教务系统抓取脚本 ===============
+  <span class="s">✓</span> 周一 1-2节          <span class="s">✓</span> 单周过滤（1-15 单 → 8 周）
+  <span class="s">✓</span> 双周首项/末项      <span class="s">✓</span> 间断周次内容 [1,2,3,10,11,12,13]
+  <span class="s">✓</span> 一门课拆成 2 条      <span class="s">✓</span> 自由时间课程
+  <span class="s">✓</span> 表头被跳过          <span class="s">✓</span> bridge 回传通道
+  结果：通过 28，失败 0
+
+=============== [2/3] 另外三个入口的抓取脚本 ===============
+  <span class="s">✓</span> 列顺序打乱后仍能识别时间地点
+  <span class="s">✓</span> 2-15周(单) 取奇数周 [3,5,7,9,11,13,15]
+  <span class="s">✓</span> 选中的是当前学期（按日期，而不是 PX 排序）
+  <span class="s">✓</span> courses 是数组而不是字符串
+  结果：通过 66，失败 0
+
+=============== [3/3] 下一节课计算引擎 ===============
+  <span class="s">✓</span> 下周一是第 1 周       <span class="s">✓</span> 倒计时 60 分钟
+  <span class="s">✓</span> 检测到 2 门同时在上（免修不免考）
+  <span class="s">✓</span> 周六下一节回到下周一
+  <span class="s">✓</span> 第 11 周（单周）大学物理回来，共 3 个块
+  结果：通过 63，失败 0
+
+全部测试通过 <span class="s">✓</span>   共 157 项断言
+</pre>
+</section>
+
+<!-- ============ 08 限制 ============ -->
+<section data-page-node-id="zytePSb4A1tJR4HxpFUnli">
+  <h2 data-page-node-id="jW6iW9pKJ4eCEawEyZGd7k"><span class="num" data-page-node-id="AmxNgG9gAI5GyLsvjj6PLN">08</span>已知限制</h2>
+
+  <div class="note bad" data-page-node-id="PM676Fw0DZ1ClKLEDm7o1z">
+    <b data-page-node-id="6anhhtxnUNLPnMRNVG7FAk">1. 作息时间是默认值，必须自己核对一次</b>
+    <p data-page-node-id="EMIWDi95cs7lPknv0hJhNI"><code data-page-node-id="XZ68rA4OnhcKEdyi7yoGqI">DEFAULT_TIME_SLOTS</code> 给的是仙林本科常见班次（第 1 节 08:00 起）。
+       南大各校区、各学期、研究生班次可能不同，夏令时也可能整体挪。
+       <strong data-page-node-id="K18GetWpo32afI0o9J3ktB">导入后请对着课表核对一次</strong>——如果卡片时间整体偏移，问题 99% 出在这里。
+       设置页提供了「恢复默认作息」。</p>
+  </div>
+
+  <div class="note" data-page-node-id="iF2i3jWMd9NnsexeZ3EDYn">
+    <b data-page-node-id="RksAjbpmMNyD0Utf49ErkQ">2. 锁屏卡片的 renderingMode 配置方式在 API 18 之后有调整</b>
+    <p data-page-node-id="2mJ5LMvXtDZSmV87qLpqCY">当前按经典写法配在 <code data-page-node-id="FfUL6sEoszYEwxfAJPIVyK">form_lock_config.json</code> 顶层（<code data-page-node-id="iIWG79BDUAbMyaGWa2or71">renderingMode: "autoColor"</code>、
+       <code data-page-node-id="u5St521sC3Yo1ie4UYhseL">supportDimensions</code> 含 <code data-page-node-id="mSGvWe5qR7IMdLgcDP2pLC">1*2</code>）。编译报错时以本地 SDK 的提示为准核对一次。</p>
+  </div>
+
+  <div class="note" data-page-node-id="JweQ2HJc64Z3gHmaTTycvo">
+    <b data-page-node-id="IzYUi3RyLYLTZg7gB4FG7X">3. 抓取依赖教务系统的页面结构</b>
+    <p data-page-node-id="DoZOLISk5Boi9EC1I9LFqS">ehall 改版会让 <code data-page-node-id="nYtG9d2KL5G4Nf7z3xLBOx">#dqxnxqkclb</code> 或 <code data-page-node-id="j6AvF70RaMRmptA4NIcWnZ">table tbody</code> 失效。
+       脚本里加了多级兜底和分阶段的错误提示（<code data-page-node-id="qsuSQ2BGoFuD4gXJtuV9zd">findTable</code> / <code data-page-node-id="zupY6sqSugtdx5BR5Y0CtD">emptyTable</code> /
+       <code data-page-node-id="rSns5nVYCvvkJKE0gDVaKl">emptyCourses</code>），出问题能快速定位。改版后只需改 <code data-page-node-id="hgyBqBCqaXGDNWgYcz4Spp">njubksjw.js</code>
+       一个文件，然后跑 <code data-page-node-id="mnthv2PoJdc0jXFwSYS7OG">test_extractor.js</code> 回归。</p>
+  </div>
+
+  <div class="note" data-page-node-id="LVofNbkIEBFk54vm5BprEW">
+    <b data-page-node-id="QupwhvydWFAD2wJqoLKor9">4. 登录不自动</b>
+    <p data-page-node-id="SU3coA4JUZrBYPVoPaHqKh">统一身份认证必须人工输入，应用不会代填、不会保存密码。代价是重新导入时要登录一次
+       （Cookie 会保留一段时间）。这是刻意的取舍——不托管用户密码。</p>
+  </div>
+</section>
+
+<!-- ============ 09 后续 ============ -->
+<section data-page-node-id="XHApDP0Ui5ALhG3Ii0MFIk">
+  <h2 data-page-node-id="9rP4G5zkJiQGzMUBtornex"><span class="num" data-page-node-id="dFLdEIjBsqKq0mA6GWVV8r">09</span>后续可以做的</h2>
+  <div class="grid2" data-page-node-id="KzAvW9BGCWsgBQm0uJcxec">
+    <div class="card" data-page-node-id="UAKwZdQy7JaPbb0DlwiJGx"><h4 style="margin-top:0" data-page-node-id="WioLndIhioK2fxgQNEkLlq">作息表逐节可编辑</h4>
+      <p style="font-size:13.4px" data-page-node-id="xAaCTO8u8WmbEXgPcBuQhd">现在是整表恢复默认，理想是按校区预设 + 手动微调。</p></div>
+    <div class="card" data-page-node-id="F1j5xha9xobrqZL4GuPKTm"><h4 style="margin-top:0" data-page-node-id="7G9SSt325THfNfEMhJBymb">课表分享 / 同班对比</h4>
+      <p style="font-size:13.4px" data-page-node-id="AXIE1rnqMFZv7CTkq0TeEB">生成图片或链接分享给同学；反向做「同班同学课表对比」找共同空课时间。</p></div>
+    <div class="card" data-page-node-id="YqmNwsc0PasqHVpyzeokX6"><h4 style="margin-top:0" data-page-node-id="DAHLqoTM4oTlDQkeJPp0wu">空教室查询</h4>
+      <p style="font-size:13.4px" data-page-node-id="IJqk4CPluVfVw47uoDFgcL">ehall 本身有空教室查询，再写一个注入脚本就能接到同一个导入框架里。</p></div>
+    <div class="card" data-page-node-id="qU7jHVyReOzWZGmLSgdJHN"><h4 style="margin-top:0" data-page-node-id="n2tV47WVVOtvEnJg8KFbRG">卡片长按切周次</h4>
+      <p style="font-size:13.4px" data-page-node-id="NmWDpZJawEE5LijC8I4hCD"><code data-page-node-id="Uwm4KVS7pRKqAqHodArREW">onFormEvent</code> 已经接好了，加两个按钮即可。</p></div>
+  </div>
+</section>
+
+<footer data-page-node-id="IRcyUcj5R51As3jb6Cpd7g">
+  <p data-page-node-id="XGCA9Jy2toHAsuA51u4dGC"><strong data-page-node-id="9X1Jf6webF78XAcsJgpdgz">南哪儿课表 · NJU ClassMate</strong> — HarmonyOS ArkTS 实现，27 个 ArkTS 源文件 + 4 个注入脚本，71 个文件，157 项离线断言。</p>
+  <p style="margin-top:8px" data-page-node-id="5JFUNuqMbvPXY9ynCbNDJl">课表解析规则与教务系统 URL 配置参考了开源项目
+     <a href="https://github.com/idealclover/NJU-Class-Shedule-Flutter" style="color:var(--blue)" data-page-node-id="EXeHf3ogrWz6ALoj9Djcsz">NJU-Class-Shedule-Flutter（南哪课表）</a>
+     的公开实现，特此致谢。</p>
+  <p style="margin-top:8px" data-page-node-id="PlAhCTvofGIUQ69Epzxbrt">本项目只读取用户自己有权查看的课表数据，全部保存在本机，不向任何服务器上传。</p>
+</footer>
+
+</div>
+</body>
+</html>

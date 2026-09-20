@@ -1,0 +1,17 @@
+*.iml
+.gradle
+/local.properties
+/.idea
+.DS_Store
+/build
+*/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+keystore.properties
+*.jks
+_legacy-java
+# 构建产物：APK 不入库（源码可一键重建，二进制交给 GitHub Release）
+/dist
+*.apk

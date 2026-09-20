@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-page-node-id="5DQL3jOEK19uCjVyAaXsZa">
+<head data-page-node-id="SbA466XyoGeBS00HY5VqUp">
+<meta charset="UTF-8" data-page-node-id="riHXd0Wz2uAIv5Cx5vWvoJ">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1" data-page-node-id="0ggauth4ssopoM2Il5CBap">
+<title>南哪儿课表</title>
+<link rel="stylesheet" href="style.css" data-page-node-id="0oYEhBZ4FTsT5zi2iHdEK9">
+</head>
+<body data-page-node-id="KCycGLvchfFABhwKDGrQKt">
+
+<div id="app" data-page-node-id="dllIwNFsbOnH6if56CABFm">
+
+  <!-- ==================== 顶栏 ==================== -->
+  <header class="header" data-page-node-id="CFvugUQhntBpTnjlNYFANU">
+    <div class="header-main" data-page-node-id="ZoBdu02j7qXfqhWgJwo71X">
+      <div class="week-label" id="weekLabel" data-page-node-id="hoRFbzCuv4w1w7j38e54yw">南哪儿课表</div>
+      <div class="semester-name" id="semesterName" data-page-node-id="TgJ9VHTry8SCUzee9qTS1u"></div>
+    </div>
+    <button class="icon-btn" id="btnSettings" type="button" aria-label="设置" data-page-node-id="sHHQHZKDy8ATK5h77lZZ8h">设置</button>
+  </header>
+
+  <!-- ==================== 正文 ==================== -->
+  <main class="main" id="main" data-page-node-id="BbYH7c9KLPol2X4lngh5Ha">
+
+    <!-- 空状态 -->
+    <section class="empty-state hidden" id="emptyState" data-page-node-id="P0LtpooTvAnm2d3yyXVFXP">
+      <h2 data-page-node-id="Vxk0mF8yM10FXXZc9iRZYn">还没有课表</h2>
+      <p data-page-node-id="iKAYUpkG8jamIYT1jsMf5N">应用内置浏览器打开南大教务系统，登录后自动读取课表。<br data-page-node-id="Bx5KcOARlkfN8bFGesSkYs">
+         不需要手动录入，也不会拿到你的账号密码。</p>
+      <button class="btn-primary" id="btnImportEmpty" type="button" data-page-node-id="4c1OtfG2yPcXHtjXgH7CBl">一键导入课表</button>
+      <p class="hint" data-page-node-id="12CqDanwxArXWWBz5htrbF">导入后可以长按桌面空白处 → 小组件，把「下一节课」「今日课表」放到桌面</p>
+    </section>
+
+    <!-- 正常内容 -->
+    <div id="content" data-page-node-id="6jxYeAvDU4pFrHcqydIPuT">
+      <!-- 下一节课 -->
+      <div class="hero" id="hero" data-page-node-id="o3FyCGimxbEFUsb8A0DJv6"></div>
+
+      <!-- 分段切换 -->
+      <div class="segmented" id="segmented" data-page-node-id="cpu9ly4lFUBkxHjtgG7AVg">
+        <button class="seg-item active" data-tab="today" type="button" data-page-node-id="NsDYGJF00O9qgB8LbRsASB">今日</button>
+        <button class="seg-item" data-tab="week" type="button" data-page-node-id="e7GqNGCAYD7giHY66eCjSs">本周</button>
+        <button class="seg-item" data-tab="exam" type="button" data-page-node-id="2JoKiWUnWcthI8GGirfXHu">考试</button>
+      </div>
+
+      <div class="tab" id="tabToday" data-page-node-id="rypcCsUqo6SzLLMshP0ZKi"></div>
+      <div class="tab hidden" id="tabWeek" data-page-node-id="ybG7pbuEpNfTgDLVdB7mus"></div>
+      <div class="tab hidden" id="tabExam" data-page-node-id="GnOwgM6WfBOAVhCiRlNvhB"></div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ==================== 设置面板 ==================== -->
+<div class="sheet-mask hidden" id="sheetMask" data-page-node-id="t4kR08kQoOJG98lzE9c80g"></div>
+<div class="sheet hidden" id="settingsSheet" data-page-node-id="eKbsb5QF3gj1pkv3A8RNnA">
+  <div class="sheet-header" data-page-node-id="yFXH2vP9aAHrcLYfbE4rPf">
+    <div class="sheet-title" data-page-node-id="D2ErYDUAYiBHdaD3wnQuYJ">设置</div>
+    <button class="icon-btn" id="btnCloseSheet" type="button" data-page-node-id="F9fyTqtRloEI0CqBbeGPbj">完成</button>
+  </div>
+
+  <div class="sheet-body" data-page-node-id="DHqTCey6kAIWCfZ3v74Gqy">
+
+    <!-- ==================== 本机适配 ====================
+         放在最前面，因为这一组回答的是"这个 App 在你手机上到底能不能正常工作"。
+         国产 ROM（尤其华为 EMUI / 鸿蒙）默认会压制后台，
+         课前提醒、锁屏通知、小组件刷新会静默失效——而且不报错，
+         用户只会觉得"这功能是坏的"。 -->
+    <div class="group-title" id="adaptTitle">本机适配</div>
+    <div class="group">
+      <div class="row">
+        <div class="row-col">
+          <span class="row-label">当前设备</span>
+          <span class="adapt-device" id="deviceLine">读取中…</span>
+        </div>
+      </div>
+      <div id="adaptList"></div>
+    </div>
+
+    <div class="group-title" data-page-node-id="6ZzFlBsFKz3fA6YGgGqApk">学期</div>
+    <div class="group" data-page-node-id="OxlIRTJoB2sI5OTleDoLZu">
+      <!-- 现在是第几周：设好 N 后自动反推开学周一，不用自己翻日历找开学那天 -->
+      <div class="row">
+        <div class="row-col">
+          <span class="row-label">现在是第几周</span>
+          <span class="row-desc" id="valSemesterStart">点 + 设置，自动反推开学日期</span>
+        </div>
+        <div class="stepper">
+          <button class="step-btn" id="weekMinus" type="button" aria-label="上一周">−</button>
+          <span class="step-val" id="weekValue">—</span>
+          <button class="step-btn" id="weekPlus" type="button" aria-label="下一周">＋</button>
+        </div>
+      </div>
+      <div class="row" data-page-node-id="fHeJLHXSCntgEGN3cM4n7d">
+        <div class="row-col" data-page-node-id="7M5DtLbHxZMJYHfnm2Q7Db">
+          <span class="row-label" data-page-node-id="ox1CgfxBogEGP59gEZ7dWJ">作息时间表</span>
+          <span class="row-desc" data-page-node-id="FBmRbX5Cm0JopYzvpNDUZK">各校区、夏令时、研究生班次可能不同。卡片时间整体偏移就来这里校准。</span>
+        </div>
+      </div>
+      <div class="row row-tap" id="rowSlotEditor" data-page-node-id="DDJuYUHSr8omXPjRdzs4Cf">
+        <span class="row-label" data-page-node-id="QoqlxjEAU3xGAEphSQlez4">逐节校准 / 整体平移</span>
+        <span class="row-chev" data-page-node-id="i2E2jtjsanzh9vkLYAaerW">›</span>
+      </div>
+    </div>
+
+    <div class="group-title">锁屏显示</div>
+    <div class="group">
+      <div class="row">
+        <div class="row-col">
+          <span class="row-label">锁屏常驻通知</span>
+          <span class="row-desc">不解锁就能在锁屏上看到下一节课、地点和自走秒倒计时。
+            Android 从 5.0 起就没有锁屏小组件了，常驻通知是唯一能做到这个的方式。</span>
+        </div>
+        <label class="switch"><input type="checkbox" id="swLockNotify"><span class="slider"></span></label>
+      </div>
+      <div class="row">
+        <div class="row-col">
+          <span class="row-label">锁屏上今天没课时显示明天</span>
+          <span class="row-desc">不写"今天没有课"这种废话，直接把明天的安排顶上来</span>
+        </div>
+        <label class="switch"><input type="checkbox" id="swLockTomorrow"><span class="slider"></span></label>
+      </div>
+      <div class="row row-tap" id="rowPushNotify">
+        <div class="row-col">
+          <span class="row-label">立即推送一次</span>
+          <span class="row-desc" id="notifyStatus">检查中…</span>
+        </div>
+        <span class="row-chev">›</span>
+      </div>
+    </div>
+
+    <div class="group-title" data-page-node-id="02DuCZS8An0ECTJksgA0oI">上课提醒</div>
+    <div class="group" data-page-node-id="4bDYYOFmPaCZEFcgYl2jt6">
+      <div class="row" data-page-node-id="ArRpp1gFLvwxKjBlshe9OP">
+        <div class="row-col" data-page-node-id="QxrsTQ9T2vVFns6eayDpHA">
+          <span class="row-label" data-page-node-id="lIsSIPiYtqkAmEt1LL7aia">开启课前提醒</span>
+          <span class="row-desc" data-page-node-id="CGJ4UB71j0SSsCnGsF2PDH">用系统闹钟，应用没打开也会准时弹</span>
+        </div>
+        <label class="switch" data-page-node-id="XzQy9oy9Cdv9bkom13CMaf"><input type="checkbox" id="swRemind" data-page-node-id="BTMmEdHVi3cUxtlqFQkmZg"><span class="slider" data-page-node-id="wCBCGHi1kmxKM2GJATcHA6"></span></label>
+      </div>
+      <div class="row" data-page-node-id="aJDe199VT5AYnPbgvauG67">
+        <div class="row-col" data-page-node-id="bsGoJgeUAUBlrm5u4smkVQ"><span class="row-label" data-page-node-id="l1F9cunylO28XkjHMOw32q">提前提醒</span></div>
+        <div class="chips" id="remindChips" data-page-node-id="HGFaIoWG0kja6iNsrno1Ae"></div>
+      </div>
+    </div>
+
+    <div class="group-title" data-page-node-id="KmLB9QHKJvzmEAcTXyZaX3">后台与自动刷新</div>
+    <div class="group" data-page-node-id="6kgHJ33287hcjBLFisDWnk">
+      <div class="row" data-page-node-id="pyEQ2visGtQmP0wmEPJPyT">
+        <div class="row-col" data-page-node-id="dGhi8AlSV7u7otO7OFu92d">
+          <span class="row-label" data-page-node-id="C3yoacgdrNObee96F5q3me">自动刷新</span>
+          <span class="row-desc" data-page-node-id="BzZSJGv3fcakTZm8mfrARi">开机自启 + 定时重算，桌面小组件保持最新</span>
+        </div>
+        <label class="switch" data-page-node-id="TjDE9erFys17mBVFtfYZLV"><input type="checkbox" id="swAuto" data-page-node-id="XWz90X57Fi3eNvCYwXeJX1"><span class="slider" data-page-node-id="y5sFxzrKE4Tjwk6DGqbsat"></span></label>
+      </div>
+      <div class="row" data-page-node-id="A7KVyZY4jtpHCMoedCa5vH">
+        <div class="row-col" data-page-node-id="CDdhhdGpFONU4qJmAWCVdW">
+          <span class="row-label" data-page-node-id="xnLu5Mw2LBkob4Tx4QW8LW">开机自启</span>
+          <span class="row-desc" id="bootDesc" data-page-node-id="Bc6LBdReN1vcyTEITGnRCf">已开启（Android 支持，重启后自动恢复）</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="group-title" data-page-node-id="fCVo7jNEMF6emkNcOtmFp7">显示</div>
+    <div class="group" data-page-node-id="CxSiGrWysRWS9GWxqZNyO4">
+      <div class="row" data-page-node-id="DyLl4Z4ENQBkYCqzLEFOei">
+        <div class="row-col" data-page-node-id="53vJ10YE1c7BhtHhvB9QoH"><span class="row-label" data-page-node-id="pYZFjTVcF6qbqMX4Q92Vt7">周课表显示周末</span></div>
+        <label class="switch" data-page-node-id="WNkUcsi8KGwyWqy8ew0zj0"><input type="checkbox" id="swWeekend" data-page-node-id="Obt2uAq1zRUHULwAC3yeSs"><span class="slider" data-page-node-id="r86OZdgBEmTNdgBjIwg58r"></span></label>
+      </div>
+      <div class="row" data-page-node-id="glTnSgxMiQkkm9SIdP82oW">
+        <div class="row-col" data-page-node-id="GrlC3KEIFGeRb0qvMVWpmZ">
+          <span class="row-label" data-page-node-id="raj0GgwqHbbcnPVZTcsAz5">今日小组件显示明天的课</span>
+          <span class="row-desc" data-page-node-id="kcF1CUv4ZKD5T5gmlCWkWp">今天没课时自动顶上明天的安排</span>
+        </div>
+        <label class="switch" data-page-node-id="w24hrxKW3VY7SJVj1B51t1"><input type="checkbox" id="swTomorrow" data-page-node-id="QKZQvAHLVdg33LqikxeFqL"><span class="slider" data-page-node-id="gec4bplvcfy2VQPEs7hn45"></span></label>
+      </div>
+    </div>
+
+    <div class="group-title" data-page-node-id="4ZqvG0a76EiobS6rVWncCl">数据</div>
+    <div class="group" data-page-node-id="q9fAfdzKWmYJsBRQNTKkcD">
+      <div class="row row-tap" id="rowAddCourse">
+        <div class="row-col">
+          <span class="row-label">手动添加课程</span>
+          <span class="row-desc">补录教务系统里没有的课（实验、组会、旁听等）</span>
+        </div>
+        <span class="row-chev">›</span>
+      </div>
+      <div class="row row-tap" id="rowReimport" data-page-node-id="kS06HiyRpHUbDkTwvDA1r9">
+        <span class="row-label" data-page-node-id="m4iHDMLM4EQRHhewZmGZUU">重新导入课表</span>
+        <span class="row-chev" data-page-node-id="X3t9kBIThOGp9Oemlr1j7G">›</span>
+      </div>
+      <div class="row row-tap" id="rowExportIcs" data-page-node-id="Kc78B0t1Z0YoQbWFpFW6Ky">
+        <div class="row-col" data-page-node-id="hnHmmyxH1PIu7pLPjXrui7">
+          <span class="row-label" data-page-node-id="3SIpKAnjwKCe6jhstsLFJA">导出为日历 (.ics)</span>
+          <span class="row-desc" data-page-node-id="EpgaarPcilCbX6Bs4CSKb4">导进系统日历，手表和电脑也能收到提醒</span>
+        </div>
+        <span class="row-chev" data-page-node-id="t7nhzMD5spHoByQPlaiZhl">›</span>
+      </div>
+      <div class="row row-tap row-danger" id="rowClear" data-page-node-id="DHIzGbzOzVFYCYxlYQdArG">
+        <span class="row-label" data-page-node-id="zhzshISvvDT9BIBRxfQXax">清空课表数据</span>
+        <span class="row-chev" data-page-node-id="jKul8SN8rGMZpmGTwkTs6a">›</span>
+      </div>
+      <div class="row" data-page-node-id="CoNs1ekrhZk55pQaX45rOD">
+        <div class="row-col" data-page-node-id="5AYKTWH2BCcFy6vqAWxNMG">
+          <span class="row-label" data-page-node-id="OOMTLgj7Ea8qbhiGuvVsjb">数据存放</span>
+          <span class="row-desc" id="lastSync" data-page-node-id="6RljagIDoQEeRqaLvIrnWq">仅保存在本机，不上传服务器</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="group-title" data-page-node-id="NNQpUqIC4oFHLwR3EeCfM8">关于</div>
+    <div class="group" data-page-node-id="lR2zF3dFK5mSNV5t1rOHh1">
+      <div class="row" data-page-node-id="kJEthNNMimCi9wRCjwqLRW"><div class="row-col" data-page-node-id="3jujel1JoBNK84Jq8SrlzR">
+        <span class="row-label" data-page-node-id="suY552wmDyCmRIe8W1bLyr">课表来源</span>
+        <span class="row-desc" data-page-node-id="9W6yzQcgZjOKxvCuvz3VSJ">南京大学教务系统（内置浏览器抓取）</span>
+      </div></div>
+      <div class="row" data-page-node-id="J7mNZGmecsGZ1mZpn1vsih"><div class="row-col" data-page-node-id="g7jmnBVOnlkfDZ9LuihKrd">
+        <span class="row-label" data-page-node-id="MoFUMLMKkya9ELRRYuA3wE">账号安全</span>
+        <span class="row-desc" data-page-node-id="cF6daE4TLijQMWaumP1cAZ">登录在官方页面完成，应用不接触账号密码</span>
+      </div></div>
+      <div class="row" data-page-node-id="z7Mfqoc74GXkqaeCPu57ib"><div class="row-col" data-page-node-id="oEpdMOV7CzHmYzShrwwj6w">
+        <span class="row-label" data-page-node-id="yXzuYg4NVpXF1GcLUIkmaT">锁屏显示</span>
+        <span class="row-desc" data-page-node-id="WODRsvIOAf49Yn1BXfu6xG">用「锁屏常驻通知」实现。Android 从 5.0 起就没有锁屏小组件了，
+          通知是唯一能躺在锁屏上的东西——打开上面的开关即可。</span>
+      </div></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- 逐节作息校准面板 -->
+<div class="sheet-mask hidden" id="slotMask" data-page-node-id="BToPXCAoxctD9tpKccV9fb"></div>
+<div class="sheet hidden" id="slotSheet" data-page-node-id="eys0YUVQyjH4l6m7DMNBTa">
+  <div class="sheet-header" data-page-node-id="n8rOoKaOeA2zgIXw8OAD7E">
+    <div class="sheet-title" data-page-node-id="xkVDItGNhKvVbYRGK9L27p">作息校准</div>
+    <button class="icon-btn" id="btnSlotDone" type="button" data-page-node-id="PFA4lwQ3xCdyebR8sygHEY">完成</button>
+  </div>
+  <div class="sheet-body" data-page-node-id="wiD0P5kMx7JWvFGdKmcqYF">
+    <div class="group" data-page-node-id="24CWDl8qjfWrABNMJtDFMG">
+      <div class="row" data-page-node-id="sqBhlbGr3yjBW0cuDBr1n9"><div class="row-col" data-page-node-id="B5p5qPRhhkCaQdhVYhQG5l">
+        <span class="row-label" data-page-node-id="QZpjnWj7PKnhyKdHZz2KeH">为什么需要校准</span>
+        <span class="row-desc" data-page-node-id="NHNCNAMEoRQo53tYuNuH4Y">课表存的是"第几节"，上面显示的几点几分是用这张表换算的。
+          作息错了所有课都会整体偏移，但界面本身看不出哪里错。</span>
+      </div></div>
+    </div>
+    <div class="group-title" data-page-node-id="uBM6AzUPqjhwZRI3wnmlxM">整体平移</div>
+    <div class="group" data-page-node-id="6BSNNVjPi5oBOPjh8RNGze">
+      <div class="row" data-page-node-id="QPAgCGCEFL5tFMRj54hmUF">
+        <div class="row-col" data-page-node-id="6SdnEQAcjko18FRyxoGCrF"><span class="row-desc" data-page-node-id="BhBBD4xx2USPpD388E07I0">所有课都偏同一个量时用它，一次修好</span></div>
+      </div>
+      <div class="row" data-page-node-id="vSushoAOx1dybfYgPkSQQG">
+        <div class="chips" id="shiftChips" data-page-node-id="EXFWNOtCawZYRDDmmaPLKF"></div>
+      </div>
+    </div>
+    <div class="group-title" data-page-node-id="kUtzK9KHhGuUHDdmfqqETd">逐节微调</div>
+    <div class="group" id="slotList" data-page-node-id="2pYUZtTs77NfMwFUSk7aQf"></div>
+  </div>
+</div>
+
+<!-- 单个时间点选择 -->
+<div class="sheet-mask hidden" id="timeMask" data-page-node-id="tdYmxraMqNo52DtBFLSyxk"></div>
+<div class="sheet sheet-small hidden" id="timeSheet" data-page-node-id="jivf8HCd8UKGaRjQRiI82n">
+  <div class="sheet-header" data-page-node-id="9HuFala0s52HBwM77gLWAR">
+    <div class="sheet-title" id="timeTitle" data-page-node-id="8FM1R6ySsEvWmbcBIBw85G">选择时间</div>
+    <button class="icon-btn" id="btnTimeCancel" type="button" data-page-node-id="KmV24eSJYcLvdVwweyIOp9">取消</button>
+  </div>
+  <div class="sheet-body" data-page-node-id="NEwtoFNOnrkM8JvOv29kPb">
+    <!-- 用两个 number 输入代替 <input type="time">：
+         Android WebView 对 time 输入的原生选择器支持不统一，
+         部分 ROM 上点击没反应，所以用最稳的数字输入。 -->
+    <div class="time-stepper">
+      <div class="time-col">
+        <input type="number" id="timeHour" class="field-input num" min="0" max="23" inputmode="numeric" placeholder="时">
+      </div>
+      <span class="time-sep">:</span>
+      <div class="time-col">
+        <input type="number" id="timeMinute" class="field-input num" min="0" max="59" inputmode="numeric" placeholder="分">
+      </div>
+    </div>
+    <button class="btn-primary full" id="btnTimeOk" type="button" data-page-node-id="f1MLccNWuai0QwCDF3AIqX">确定</button>
+  </div>
+</div>
+
+<!-- ==================== 手动添加课程面板 ==================== -->
+<div class="sheet-mask hidden" id="courseMask"></div>
+<div class="sheet hidden" id="courseSheet">
+  <div class="sheet-header">
+    <div class="sheet-title">手动添加课程</div>
+    <button class="icon-btn" id="btnCourseClose" type="button">取消</button>
+  </div>
+  <div class="sheet-body">
+
+    <div class="field">
+      <span class="field-label">课程名<b class="req">*</b></span>
+      <input type="text" id="cName" class="field-input" placeholder="例如：物理实验" autocomplete="off">
+    </div>
+
+    <div class="field">
+      <span class="field-label">星期<b class="req">*</b></span>
+      <div class="chips" id="cWeekday"></div>
+    </div>
+
+    <div class="field">
+      <span class="field-label">节次<b class="req">*</b></span>
+      <div class="field-inline">
+        <span class="field-hint">第</span>
+        <input type="number" id="cStartSlot" class="field-input num" min="1" max="24" inputmode="numeric" placeholder="1">
+        <span class="field-hint">—</span>
+        <input type="number" id="cEndSlot" class="field-input num" min="1" max="24" inputmode="numeric" placeholder="2">
+        <span class="field-hint">节</span>
+      </div>
+    </div>
+
+    <div class="field">
+      <span class="field-label">周次</span>
+      <div class="chips" id="cParity"></div>
+      <div class="field-inline" style="margin-top:8px">
+        <span class="field-hint">第</span>
+        <input type="number" id="cWeekStart" class="field-input num" min="1" max="30" value="1" inputmode="numeric">
+        <span class="field-hint">—</span>
+        <input type="number" id="cWeekEnd" class="field-input num" min="1" max="30" value="18" inputmode="numeric">
+        <span class="field-hint">周</span>
+      </div>
+    </div>
+
+    <div class="field">
+      <span class="field-label">地点</span>
+      <input type="text" id="cClassroom" class="field-input" placeholder="例如：仙Ⅱ-304" autocomplete="off">
+    </div>
+
+    <div class="field">
+      <span class="field-label">教师</span>
+      <input type="text" id="cTeacher" class="field-input" placeholder="选填" autocomplete="off">
+    </div>
+
+    <div class="field">
+      <span class="field-label">考试时间</span>
+      <input type="text" id="cTestTime" class="field-input" placeholder="选填，例如：2026-11-20 14:00" autocomplete="off">
+    </div>
+
+    <button class="btn-primary full" id="btnCourseSave" type="button">保存</button>
+
+    <div class="group-title" id="manualTitle">已手动添加</div>
+    <div class="group" id="manualList"></div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

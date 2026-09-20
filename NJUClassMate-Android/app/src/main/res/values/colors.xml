@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 主色调：和 HarmonyOS 版保持一致，南大蓝 -->
+    <color name="accent_blue">#3D7EFF</color>
+    <color name="accent_blue_light">#1A3D7EFF</color>
+    <color name="accent_purple">#7A5BFF</color>
+    <color name="accent_amber">#F5A524</color>
+
+    <color name="page_bg">#F7F8FB</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="divider">#E7E9EE</color>
+
+    <color name="text_primary">#111318</color>
+    <color name="text_secondary">#6B7280</color>
+    <color name="text_tertiary">#9AA1AC</color>
+    <color name="white">#FFFFFF</color>
+
+    <color name="chip_blue_bg">#1A3D7EFF</color>
+    <color name="chip_amber_bg">#29F5A524</color>
+    <color name="chip_gray_bg">#14808080</color>
+
+    <color name="widget_bg">#FAFBFD</color>
+</resources>

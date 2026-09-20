@@ -1,0 +1,417 @@
+/* ============================================================
+   南哪儿课表 —— 界面样式
+   深浅色用 prefers-color-scheme 自动切换；
+   主色沿用 HarmonyOS 版的南大蓝 #3D7EFF。
+   ============================================================ */
+
+:root {
+  --blue: #3D7EFF;
+  --blue-soft: rgba(61, 126, 255, .10);
+  --purple: #7A5BFF;
+  --amber: #F5A524;
+  --amber-soft: rgba(245, 165, 36, .16);
+  --red: #FF4D4F;
+  --green: #1F9D55;
+
+  --bg: #F7F8FB;
+  --surface: #FFFFFF;
+  --surface-2: #F1F3F7;
+  --line: #E7E9EE;
+  --text: #111318;
+  --text-2: #6B7280;
+  --text-3: #9AA1AC;
+
+  --radius: 16px;
+  --radius-sm: 10px;
+  --shadow: 0 2px 10px rgba(17, 19, 24, .06);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #12141A;
+    --surface: #1C1F27;
+    --surface-2: #23272F;
+    --line: #2C303A;
+    --text: #ECEFF4;
+    --text-2: #A3ACBB;
+  --text-3: #6E7686;
+  --blue-soft: rgba(61, 126, 255, .18);
+  --green: #3DD68C;
+  --shadow: none;
+}
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  margin: 0; padding: 0;
+  background: var(--bg); color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB",
+               "Microsoft YaHei", "Segoe UI", Roboto, sans-serif;
+  font-size: 15px; line-height: 1.6;
+  -webkit-text-size-adjust: 100%;
+}
+
+.hidden { display: none !important; }
+
+/* ---------------- 顶栏 ---------------- */
+.header {
+  display: flex; align-items: center; gap: 10px;
+  padding: 14px 16px 10px;
+  padding-top: calc(14px + env(safe-area-inset-top));
+  background: var(--bg);
+  position: sticky; top: 0; z-index: 10;
+}
+.header-main { flex: 1; min-width: 0; }
+.week-label { font-size: 21px; font-weight: 700; letter-spacing: -.01em; }
+.semester-name {
+  font-size: 12px; color: var(--text-2); margin-top: 1px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.icon-btn {
+  flex: none; border: none; background: var(--surface); color: var(--text);
+  font-size: 13px; padding: 7px 13px; border-radius: 9px;
+  box-shadow: var(--shadow); cursor: pointer;
+}
+.icon-btn:active { opacity: .6; }
+
+/* ---------------- 正文 ---------------- */
+.main { padding: 0 16px 32px; }
+
+/* ---------------- 下一节课 ---------------- */
+.hero {
+  border-radius: 18px; padding: 18px;
+  background: linear-gradient(135deg, var(--blue), var(--purple));
+  color: #fff; margin-bottom: 14px;
+}
+.hero.ongoing { background: linear-gradient(135deg, #F5A524, #F57C00); }
+.hero.idle { background: linear-gradient(135deg, #8E8E93, #636366); }
+.hero-top {
+  display: flex; justify-content: space-between; align-items: baseline;
+  font-size: 12px; color: rgba(255, 255, 255, .82);
+}
+.hero-title {
+  font-size: 20px; font-weight: 700; margin-top: 6px;
+  line-height: 1.32; word-break: break-word;
+}
+.hero-line { font-size: 13px; color: rgba(255, 255, 255, .84); margin-top: 8px; }
+.hero-bottom {
+  display: flex; justify-content: space-between; align-items: baseline;
+  gap: 8px; margin-top: 6px; font-size: 13px;
+}
+.hero-loc { color: rgba(255, 255, 255, .84); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hero-remain { font-weight: 700; flex: none; }
+.hero-hint { font-size: 11px; color: rgba(255, 255, 255, .72); margin-top: 8px; }
+
+/* ---------------- 分段控件 ---------------- */
+.segmented {
+  display: flex; gap: 4px; padding: 4px;
+  background: var(--surface-2); border-radius: 12px; margin-bottom: 14px;
+}
+.seg-item {
+  flex: 1; border: none; background: transparent; color: var(--text-2);
+  font-size: 14px; padding: 8px 0; border-radius: 9px;
+  cursor: pointer; font-family: inherit;
+}
+.seg-item.active { background: var(--surface); color: var(--text); font-weight: 600; }
+
+/* ---------------- 今日时间线 ---------------- */
+.day-row { display: flex; gap: 12px; padding: 12px 0; align-items: flex-start; }
+.day-row.done { opacity: .45; }
+.day-time { flex: none; width: 46px; font-size: 12px; color: var(--text-2); font-variant-numeric: tabular-nums; }
+.day-time small { display: block; font-size: 10px; color: var(--text-3); }
+.day-bar { flex: none; width: 3px; border-radius: 2px; background: var(--blue); align-self: stretch; min-height: 40px; }
+.day-row.ongoing .day-bar { background: var(--amber); }
+.day-row.done .day-bar { background: var(--line); }
+.day-body { flex: 1; min-width: 0; }
+.day-name { font-size: 15px; font-weight: 500; display: flex; align-items: center; gap: 6px; }
+.day-row.ongoing .day-name { font-weight: 700; }
+.day-meta {
+  font-size: 12px; color: var(--text-2); margin-top: 3px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.badge-now {
+  font-size: 10px; font-weight: 600; color: var(--amber);
+  background: var(--amber-soft); padding: 1px 6px; border-radius: 6px;
+}
+
+/* ---------------- 通用卡片 ---------------- */
+.card {
+  background: var(--surface); border-radius: 14px;
+  padding: 16px; box-shadow: var(--shadow);
+}
+.card + .card { margin-top: 10px; }
+.card-title { font-size: 14px; font-weight: 600; }
+.card-sub { font-size: 12px; color: var(--text-2); margin-top: 6px; }
+.section-hint { font-size: 11px; color: var(--text-3); margin-top: 12px; text-align: center; }
+
+/* ---------------- 周课表网格 ---------------- */
+.week-nav {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 10px;
+}
+.week-nav button {
+  width: 38px; height: 34px; border: none; border-radius: 9px;
+  background: var(--surface); color: var(--text); font-size: 17px;
+  box-shadow: var(--shadow); cursor: pointer;
+}
+.week-nav button:disabled { opacity: .35; }
+.week-nav .week-current { flex: 1; text-align: center; font-size: 15px; font-weight: 500; }
+.week-warn { font-size: 11px; color: var(--amber); margin-bottom: 6px; }
+
+.grid-wrap { background: var(--surface); border-radius: 14px; padding: 12px; overflow-x: auto; }
+.grid {
+  position: relative; min-width: 100%;
+}
+.grid-head { display: flex; margin-bottom: 6px; }
+.grid-head .g-time { width: 34px; flex: none; }
+.grid-head .g-day {
+  flex: 1; text-align: center; font-size: 11px; color: var(--text-3);
+}
+.grid-body { position: relative; }
+.grid-bg { position: absolute; inset: 0; display: flex; }
+.grid-bg .g-time-col { width: 34px; flex: none; }
+.grid-bg .g-time-cell {
+  height: var(--cell-h); font-size: 10px; color: var(--text-3);
+  text-align: center; line-height: 1.25; padding-top: 3px;
+}
+.grid-bg .g-day-col { flex: 1; }
+.grid-bg .g-cell { height: var(--cell-h); border-top: .5px solid var(--line); border-left: .5px solid var(--line); }
+.gblock {
+  position: absolute; border-radius: 6px; padding: 4px 5px;
+  color: #fff; font-size: 10.5px; line-height: 1.3; overflow: hidden;
+  cursor: pointer;
+}
+.gblock b { display: block; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.gblock i { font-style: normal; color: rgba(255, 255, 255, .8); font-size: 9px; display: block;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.gblock .flag {
+  position: absolute; right: 3px; top: 3px; background: var(--red);
+  font-size: 8px; border-radius: 3px; padding: 0 3px;
+}
+
+/* ---------------- 考试 ---------------- */
+.exam-row {
+  background: var(--surface); border-radius: 14px; padding: 14px;
+  display: flex; align-items: center; gap: 12px; box-shadow: var(--shadow);
+}
+.exam-row + .exam-row { margin-top: 10px; }
+.exam-body { flex: 1; min-width: 0; }
+.exam-name { font-size: 15px; font-weight: 500; }
+.exam-meta { font-size: 12px; color: var(--text-2); margin-top: 4px; }
+.exam-days { font-size: 15px; font-weight: 700; color: var(--blue); flex: none; }
+.exam-days.urgent { color: var(--red); }
+
+/* ---------------- 空状态 ---------------- */
+.empty-state { text-align: center; padding: 56px 24px; }
+.empty-state h2 { font-size: 19px; margin: 0 0 12px; }
+.empty-state p { font-size: 13.5px; color: var(--text-2); margin: 0 0 22px; }
+.empty-state .hint { font-size: 11.5px; color: var(--text-3); margin: 18px 0 0; }
+
+/* ---------------- 按钮 ---------------- */
+.btn-primary {
+  border: none; border-radius: 12px; background: var(--blue); color: #fff;
+  font-size: 15px; padding: 13px 26px; cursor: pointer; font-family: inherit;
+}
+.btn-primary:active { opacity: .85; }
+.btn-primary.full { width: 100%; margin-top: 14px; }
+.btn-primary:disabled { opacity: .5; }
+
+/* ---------------- 抽屉 / 设置面板 ---------------- */
+.sheet-mask {
+  position: fixed; inset: 0; background: rgba(0, 0, 0, .38); z-index: 40;
+}
+.sheet {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 41;
+  max-height: 88vh; display: flex; flex-direction: column;
+  background: var(--bg);
+  border-radius: 20px 20px 0 0;
+  padding-bottom: env(safe-area-inset-bottom);
+  animation: sheet-up .22s ease-out;
+}
+@keyframes sheet-up { from { transform: translateY(14px); opacity: .6; } to { transform: none; opacity: 1; } }
+.sheet-small { max-height: 60vh; }
+.sheet-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 15px 16px 10px; flex: none;
+}
+.sheet-title { font-size: 17px; font-weight: 700; }
+.sheet-body { overflow-y: auto; padding: 0 16px 28px; -webkit-overflow-scrolling: touch; }
+
+.group-title { font-size: 12px; color: var(--text-2); margin: 18px 0 8px; }
+.group { background: var(--surface); border-radius: 14px; overflow: hidden; }
+.row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 13px 15px; border-bottom: .5px solid var(--line);
+}
+.group .row:last-child { border-bottom: none; }
+.row-tap { cursor: pointer; }
+.row-tap:active { background: var(--surface-2); }
+.row-col { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.row-label { font-size: 15px; }
+.row-desc { font-size: 11.5px; color: var(--text-3); margin-top: 3px; line-height: 1.45; }
+.row-value { font-size: 13px; color: var(--text-2); }
+.row-chev { font-size: 17px; color: var(--text-3); flex: none; }
+.row-danger .row-label { color: var(--red); }
+
+/* 开关 */
+.switch { position: relative; flex: none; width: 46px; height: 28px; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider {
+  position: absolute; inset: 0; background: var(--line); border-radius: 14px;
+  transition: background .15s;
+}
+.slider::before {
+  content: ""; position: absolute; width: 22px; height: 22px; left: 3px; top: 3px;
+  background: #fff; border-radius: 50%; transition: transform .15s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .2);
+}
+.switch input:checked + .slider { background: var(--blue); }
+.switch input:checked + .slider::before { transform: translateX(18px); }
+
+/* 选项胶囊 */
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  border: none; font-family: inherit; cursor: pointer;
+  font-size: 12.5px; padding: 6px 13px; border-radius: 12px;
+  background: var(--surface-2); color: var(--text-2);
+}
+.chip.active { background: var(--blue); color: #fff; }
+
+/* 时间输入 */
+.time-input {
+  width: 100%; font-size: 18px; padding: 14px; border-radius: 12px;
+  border: 1px solid var(--line); background: var(--surface); color: var(--text);
+  font-family: inherit;
+}
+
+/* 作息逐节编辑行 */
+.slot-row { display: flex; align-items: center; gap: 8px; }
+.slot-index { width: 56px; flex: none; font-size: 14px; }
+.slot-time {
+  font-size: 14px; padding: 6px 12px; border-radius: 9px;
+  background: var(--blue-soft); color: var(--blue); cursor: pointer;
+  font-variant-numeric: tabular-nums; border: none; font-family: inherit;
+}
+.slot-dur { margin-left: auto; font-size: 11px; color: var(--text-3); }
+.slot-dur.bad { color: var(--red); }
+
+/* ============================================================
+   本机适配面板
+
+   这些行是"针对这台手机的 ROM 还需要补哪些授权"，不是普通设置项，
+   所以要一眼看出哪项不合格（红色）、哪项读不到状态（灰色问号）。
+   ============================================================ */
+
+.adapt-device {
+  font-size: 12px;
+  color: var(--text-3);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  line-height: 1.5;
+}
+
+.adapt-dot {
+  display: inline-block;
+  width: 15px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.adapt-dot.ok { color: var(--green); }
+.adapt-dot.warn { color: var(--red); }
+.adapt-dot.unknown { color: var(--text-3); }
+
+/* 读不到状态的那一项：不给对勾也不给警告，视觉上降低权重 */
+.row-tap.adapt-unknown .row-label { color: var(--text-2); }
+
+/* ============================================================
+   周次步进器 / 手动录课表单 / 时间选择
+   ============================================================ */
+
+/* 现在是第几周 的步进器 */
+.stepper {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.step-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: var(--surface-2);
+  color: var(--text);
+  font-size: 18px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.step-btn:active { opacity: .6; }
+
+.step-val {
+  min-width: 52px;
+  text-align: center;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+/* 手动录课表单 */
+.field { margin-bottom: 14px; }
+
+.field-label {
+  display: block;
+  font-size: 13px;
+  color: var(--text-2);
+  margin-bottom: 6px;
+}
+.field-label .req { color: var(--red); font-weight: 700; }
+
+.field-input {
+  width: 100%;
+  height: 40px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 15px;
+  padding: 0 12px;
+  box-sizing: border-box;
+}
+.field-input:focus { outline: none; border-color: var(--blue); }
+.field-input.num { width: 56px; text-align: center; padding: 0 4px; }
+
+.field-inline { display: flex; align-items: center; gap: 8px; }
+.field-hint { color: var(--text-3); font-size: 13px; }
+
+/* 手动课程列表里的删除按钮 */
+.manual-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+}
+.manual-item + .manual-item { border-top: 1px solid var(--line); }
+.manual-item .row-col { flex: 1; }
+.manual-del {
+  border: none;
+  background: transparent;
+  color: var(--red);
+  font-size: 13px;
+  padding: 6px 8px;
+  cursor: pointer;
+}
+
+/* 时间选择：时/分 两个数字输入 */
+.time-stepper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.time-col .field-input.num { width: 80px; height: 48px; font-size: 22px; text-align: center; }
+.time-sep { font-size: 22px; color: var(--text-3); font-weight: 700; }

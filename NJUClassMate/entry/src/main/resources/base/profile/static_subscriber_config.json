@@ -1,0 +1,12 @@
+{
+  "commonEvents": [
+    {
+      "name": "BootSubscriber",
+      "permission": "",
+      "events": [
+        "usual.event.BOOT_COMPLETED",
+        "usual.event.USER_UNLOCKED"
+      ]
+    }
+  ]
+}

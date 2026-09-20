@@ -1,0 +1,60 @@
+{
+  "string": [
+    {
+      "name": "module_desc",
+      "value": "NJU ClassMate main module"
+    },
+    {
+      "name": "EntryAbility_desc",
+      "value": "View your next class, today's schedule and the weekly timetable"
+    },
+    {
+      "name": "EntryAbility_label",
+      "value": "NJU ClassMate"
+    },
+    {
+      "name": "form_next_class_label",
+      "value": "Next Class"
+    },
+    {
+      "name": "form_today_label",
+      "value": "Today"
+    },
+    {
+      "name": "form_lock_label",
+      "value": "Next Class (Lock Screen)"
+    },
+    {
+      "name": "form_desc",
+      "value": "Shows the next class name, time, location and countdown"
+    },
+    {
+      "name": "form_today_desc",
+      "value": "Shows a timeline of all classes today"
+    },
+    {
+      "name": "form_lock_desc",
+      "value": "Glance at your next class from the lock screen"
+    },
+    {
+      "name": "work_label",
+      "value": "Timetable background refresh"
+    },
+    {
+      "name": "work_desc",
+      "value": "Recalculates the week index, refreshes widgets and rebuilds reminders"
+    },
+    {
+      "name": "boot_subscriber_label",
+      "value": "Boot initialisation"
+    },
+    {
+      "name": "boot_subscriber_desc",
+      "value": "Restores the refresh task after boot (requires system signature or MDM)"
+    },
+    {
+      "name": "reason_reminder",
+      "value": "Reminds you before class so you never miss or misplace a lecture"
+    }
+  ]
+}

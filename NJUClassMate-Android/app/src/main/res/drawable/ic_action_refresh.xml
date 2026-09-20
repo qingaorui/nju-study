@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 通知动作图标。现代 Android 不会显示动作图标（只在文字里），
+     但部分 ROM 仍会画出来，所以还是给一个正经的单色矢量。 -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M12,5V2L7,6l5,4V7c3.31,0 6,2.69 6,6 0,1.01 -0.25,1.97 -0.7,2.8l1.47,1.47C19.53,16.02 20,14.57 20,13c0,-4.42 -3.58,-8 -8,-8zM12,19c-3.31,0 -6,-2.69 -6,-6 0,-1.01 0.25,-1.97 0.7,-2.8L5.23,8.73C4.47,9.98 4,11.43 4,13c0,4.42 3.58,8 8,8v3l5,-4 -5,-4v3z" />
+</vector>

@@ -5,3 +5,25 @@ build/
 .idea/
 data/
 .DS_Store
+
+# 签名 / 敏感信息（课表工程）—— 绝不能入库
+*.jks
+*.keystore
+keystore.properties
+local.properties
+
+# 构建产物与二进制（源码可一键重建，二进制交给 GitHub Release）
+dist/
+*.apk
+*.hap
+*.app
+*.exe
+.gradle/
+.hvigor/
+oh_modules/
+node_modules/
+
+# 本地环境 / 工作区数据
+.android-toolchain/
+.workbuddy/
+*.log
